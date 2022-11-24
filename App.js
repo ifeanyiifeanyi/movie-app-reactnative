@@ -1,20 +1,59 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { View, Text } from 'react-native'
+import React from 'react'
+import { createStackNavigator } from '@react-navigation/stack'
+import { NavigationContainer } from '@react-navigation/native'
+import Splash from './src/screens/Splash'
+import SelectUser from './src/screens/SelectUser'
+import HomeScreen from './src/screens/HomeScreen'
+import Login from './src/screens/Login'
+import Register from './src/screens/Register'
+import RecoverPassword from './src/screens/RecoverPassword'
+import VideoDetail from './src/screens/VideoDetail'
 
-export default function App() {
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen 
+                    name='Splash' 
+                    component={Splash} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='SelectUser' 
+                    component={SelectUser} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='HomeScreen' 
+                    component={HomeScreen} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='VideoDetail' 
+                    component={VideoDetail} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='Login' 
+                    component={Login} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='Register' 
+                    component={Register} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='RecoverPassword' 
+                    component={RecoverPassword} 
+                    options={{ headerShown: false }}
+                />
+            </Stack.Navigator>
+        </NavigationContainer>
+  )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App
