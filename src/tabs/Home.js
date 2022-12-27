@@ -35,12 +35,56 @@ const Home = () => {
   const [list, setList] = useState([]);
   const [name, setName] = useState('');
 
+  const [videoList, SetVideoList] = useState([]);
+  const [videoListByRating, SetVideoListByRating] = useState([]);
+  const [videoListByCategory, SetVideoListByCategory] = useState([]);
 
   // use effect function calls
   useEffect(() => {
     getCategories();
     getData();
+    getVideos();
+    getVideosByRating();
+    getVideosByCategory();
   }, []);
+
+  //  fetch id and thumbnail from api
+  const getVideos = () => {
+    axios({
+      url: `${BASE_URL}/api/allvideo`,
+      method: "GET"
+    }).then(res => {
+      SetVideoList(res.data);
+      console.log(res.data)
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
+
+  // get video by categories
+  const getVideosByCategory = () => {
+    axios({
+      url: `${BASE_URL}/api/allvideobycategory`,
+      method: "GET"
+    }).then(res => {
+      SetVideoListByCategory(res.data);
+      console.log(res.data)
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
+
+  const getVideosByRating = () => {
+    axios({
+      url: `${BASE_URL}/api/allvideobyrating`,
+      method: "GET"
+    }).then(res => {
+      SetVideoListByRating(res.data);
+      console.log(res.data)
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
 
   //get categories from api
   const getCategories = () => {
@@ -80,7 +124,7 @@ const Home = () => {
 
             {/* get categories from the server*/}
             <View style={styles.categoryView}>
-              {list?.map((item, index) => {
+              {list.map((item, index) => {
                 return (
                   <TouchableOpacity style={styles.categoryTab} key={item.id}>
                     <Text style={styles.categoryText}>{item.name}</Text>
@@ -92,23 +136,7 @@ const Home = () => {
 
             </View>
 
-            <View style={styles.topViewBottomView}>
-              <TouchableOpacity style={styles.bottom1}>
-                <Image source={require('../img/logo/plus.png')} style={styles.bottom1Icon} />
-                <Text style={styles.bottom1Text}>My playlist</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.bottom1}>
-                <Image source={require('../img/logo/play1.png')} style={styles.bottom1Icon} />
-                <Text style={styles.bottom1Text}>play</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.bottom1}>
-                <Image source={require('../img/logo/info.png')} style={styles.bottom1Icon} />
-                <Text style={styles.bottom1Text}>info</Text>
-              </TouchableOpacity>
-            </View>
-
+           
           </View>
           <View style={styles.header}>
             <Image source={require('../img/logo/loginlogo.png')} style={styles.headerLogo} />
@@ -122,14 +150,16 @@ const Home = () => {
           <View style={styles.secondView}>
             <Text style={styles.customTitle}>Next watch</Text>
             <View style={{ marginTop: 10 }}>
-              <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={trendingVideos} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
+              <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoList} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
                 return (
-                  <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail') }}>
-                    <Image source={item} style={{ width: 150, height: 170, borderRadius: 10 }} />
+                  <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { id: item.id }) }}>
+
+                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={{ width: 150, height: 170, borderRadius: 10 }} />
+
+
                     <View style={styles.nextWatchView}>
 
-                      <Image source={require('../img/logo/info.png')} style={{ width: 15, height: 15, tintColor: 'teal', marginLeft: 10 }} />
-
+                      <Text style={{ color: 'gold', textTransform: 'capitalize', fontWeight: 'slim', fontSize: 15, }}>{item.title}</Text>
                       <Image source={require('../img/logo/option.png')} style={{ width: 15, height: 15, tintColor: 'teal', marginRight: 10 }} />
 
                     </View>
@@ -143,13 +173,12 @@ const Home = () => {
             </View>
             <Text style={styles.customTitle}>Trending videos ...</Text>
             <View style={{ marginTop: 10 }}>
-              <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={trendingVideos} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
+              <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByRating} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity style={styles.trendingVideoItem}>
-                    <Image source={item} style={styles.trendingVideoItemImage} />
+                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
                     <View style={styles.videoLabel}>
-                      <Text style={styles.videoLabelText}>Top</Text>
-                      <Text style={styles.videoLabelText}>10</Text>
+                      <Text style={styles.videoLabelText}>{item.rateName}</Text>
                     </View>
                   </TouchableOpacity>
                 )
@@ -157,17 +186,17 @@ const Home = () => {
             </View>
             <Text style={[styles.customTitle, { marginTop: 20 }]}>Special Selections ...</Text>
             <View style={{ marginTop: 5, marginBottom: 100 }}>
-              <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={specialSelection} horizontal renderItem={({ item, image }) => {
-                return (
-                  <TouchableOpacity style={styles.trendingVideoItem}>
-                    <Image source={item} style={styles.trendingVideoItemImage} />
-                    <View style={styles.videoLabel}>
-                      <Text style={styles.videoLabelText}>Special</Text>
-                    </View>
-                  </TouchableOpacity>
-                )
-              }} />
-            </View>
+            <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByCategory} horizontal renderItem={({ item, image }) => {
+              return (
+                <TouchableOpacity style={styles.trendingVideoItem}>
+                  <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
+                  <View style={styles.videoLabel}>
+                    <Text style={styles.videoLabelText}>{item.catName}</Text>
+                  </View>
+                </TouchableOpacity>
+              )
+            }} />
+          </View>
           </View>
         </View>
       </ScrollView>

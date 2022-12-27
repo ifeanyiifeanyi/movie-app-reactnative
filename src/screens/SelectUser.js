@@ -41,7 +41,7 @@ const SelectUser = ({ route, navigation }) => {
   return (
     <View style={myStyle.container}>
       <View style={myStyle.header}>
-        <Text style={myStyle.title}>Who is watching 👀</Text>
+        <Text style={myStyle.title}>Welcome <Text>{name}</Text> 👀</Text>
 
       </View>
       <View style={myStyle.profiles}>
