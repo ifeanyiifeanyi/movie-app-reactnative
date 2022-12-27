@@ -10,24 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Home = () => {
   const navigation = useNavigation();
 
-  // const { username, otherParam } = route.params;
-  const trendingVideos = [
-    require('../img/movies/1.webp'), require('../img/movies/10.webp'),
-    require('../img/movies/2.webp'), require('../img/movies/3.webp'),
-    require('../img/movies/4.webp'), require('../img/movies/5.jpg'),
-    require('../img/movies/7.webp'), require('../img/movies/9.webp')
-  ]
-  const specialSelection = [
-    require('../img/movies/15.webp'),
-    require('../img/movies/11.webp'),
-    require('../img/movies/13.webp'),
-    require('../img/movies/14.jpg'),
-    require('../img/movies/16.webp'),
-    require('../img/movies/17.jpg'),
-    require('../img/movies/18.webp'),
-    require('../img/movies/12.webp'),
-    require('../img/movies/15.webp')
-  ]
+  
   //bapitsm
   //first holy
   //catism
