@@ -5,44 +5,34 @@ import { useNavigation } from '@react-navigation/native'
 import { BASE_URL } from '@env';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const IMAGES = [
-  require('../img/movies/15.webp'),
-  require('../img/movies/11.webp'),
-  require('../img/movies/13.webp'),
-  require('../img/movies/14.jpg'),
-  require('../img/movies/16.webp'),
-  require('../img/movies/17.jpg'),
-  require('../img/movies/18.webp'),
-  require('../img/movies/12.webp'),
-  require('../img/movies/15.webp')
-]
+
 
 const Home = () => {
   const navigation = useNavigation();
-
-  
-  
-  //bapitsm
-  //first holy
-  //catism
-  //other categories
+  // set category 
   const [list, setList] = useState([]);
+  // set the user name from asyn storage
   const [name, setName] = useState('');
 
   const [videoList, SetVideoList] = useState([]);
   const [videoListByRating, SetVideoListByRating] = useState([]);
   const [videoListByCategory, SetVideoListByCategory] = useState([]);
 
-  const [index, setIndex] = useState(0)
+  // set images thumbnail measures
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageThumbnail, setImageThumbnail] = useState([]);
 
-useEffect(()=>{
-  const interval = setInterval(() => {
-    setIndex((index+1)%3)
-  }, 2000);
+  //setinterval for video thumbnail carusel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((currentImageIndex + 1) % imageThumbnail.length);
+    }, 3000);
 
-  return ()=> { interval && clearInterval(interval) }
-}, [])
-  
+    return () => clearInterval(interval);
+  }, [currentImageIndex]);
+
+
+
   // use effect function calls
   useEffect(() => {
     getCategories();
@@ -51,6 +41,30 @@ useEffect(()=>{
     getVideosByRating();
     getVideosByCategory();
   }, []);
+
+  //get video thumbnail for caruosel from api
+  const videoThumbnails = () => {
+    axios({
+      url: `${BASE_URL}/api/thumbnail`,
+      method: "GET"
+    }).then(res => {
+      setList(res.data);
+    }).catch((_error) => {
+      console.log("Api call error");
+    });
+  }
+
+  //get categories from api
+  const getCategories = () => {
+    axios({
+      url: `${BASE_URL}/api/categories`,
+      method: "GET"
+    }).then(res => {
+      setList(res.data);
+    }).catch((_error) => {
+      console.log("Api call error");
+    });
+  }
 
   //  fetch id and thumbnail from api
   const getVideos = () => {
@@ -64,20 +78,6 @@ useEffect(()=>{
       console.log(err)
     })
   }
-
-  // get video by categories
-  const getVideosByCategory = () => {
-    axios({
-      url: `${BASE_URL}/api/allvideobycategory`,
-      method: "GET"
-    }).then(res => {
-      SetVideoListByCategory(res.data);
-      console.log(res.data)
-    }).catch((err) => {
-      console.log(err)
-    })
-  }
-
   const getVideosByRating = () => {
     axios({
       url: `${BASE_URL}/api/allvideobyrating`,
@@ -89,18 +89,16 @@ useEffect(()=>{
       console.log(err)
     })
   }
-
-  //get categories from api
-  const getCategories = () => {
+  const getVideosByCategory = () => {
     axios({
-      url: `${BASE_URL}/api/categories`,
+      url: `${BASE_URL}/api/allvideobycategory`,
       method: "GET"
     }).then(res => {
-      setList(res.data);
-      console.log(response)
-    }).catch((error) => {
-      console.log("Api call error");
-    });
+      SetVideoListByCategory(res.data);
+      console.log(res.data)
+    }).catch((err) => {
+      console.log(err)
+    })
   }
 
 
@@ -124,23 +122,33 @@ useEffect(()=>{
         <View style={styles.container}>
           <StatusBar barStyle='light-content' />
           <View style={styles.topView}>
-            <Image source={IMAGES[index]} style={styles.topView} />
-
-            {/* get categories from the server*/}
-            <View style={styles.categoryView}>
-              {list.map((item, index) => {
+            {
+              videoList.map((item, _index) => {
                 return (
-                  <TouchableOpacity style={styles.categoryTab} key={item.id}>
-                    <Text style={styles.categoryText}>{item.name}</Text>
-                  </TouchableOpacity>
+                  <View>
+                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.topView} key={item.id} />
+
+                    <Text style={styles.VideoHeadTitles}>{item.title}</Text>
+                  </View>
                 )
-              })}
+              })
+            }
 
-
+            // get categories from the server
+            <View style={styles.categoryView}>
+              {
+                list.map((item, _index) => {
+                  return (
+                    <TouchableOpacity style={styles.categoryTab} key={item.id}>
+                      <Text style={styles.categoryText}>{item.name}</Text>
+                    </TouchableOpacity>
+                  )
+                })
+              }
 
             </View>
 
-           
+
           </View>
           <View style={styles.header}>
             <Image source={require('../img/logo/loginlogo.png')} style={styles.headerLogo} />
@@ -190,17 +198,17 @@ useEffect(()=>{
             </View>
             <Text style={[styles.customTitle, { marginTop: 20 }]}>Special Selections ...</Text>
             <View style={{ marginTop: 5, marginBottom: 100 }}>
-            <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByCategory} horizontal renderItem={({ item, image }) => {
-              return (
-                <TouchableOpacity style={styles.trendingVideoItem}>
-                  <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
-                  <View style={styles.videoLabel}>
-                    <Text style={styles.videoLabelText}>{item.catName}</Text>
-                  </View>
-                </TouchableOpacity>
-              )
-            }} />
-          </View>
+              <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByCategory} horizontal renderItem={({ item, image }) => {
+                return (
+                  <TouchableOpacity style={styles.trendingVideoItem}>
+                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
+                    <View style={styles.videoLabel}>
+                      <Text style={styles.videoLabelText}>{item.catName}</Text>
+                    </View>
+                  </TouchableOpacity>
+                )
+              }} />
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -255,7 +263,16 @@ const styles = StyleSheet.create({
     width: '80%',
     alignSelf: 'center',
     justifyContent: 'space-around',
-    marginTop: 120,
+    marginTop: 70,
+  },
+  VideoHeadTitles: {
+    flex:1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'teal',
+    fontSize: 20,
+    fontWeight: '900',
+    marginLeft:20,
   },
   categoryTab: {
     width: '30%',

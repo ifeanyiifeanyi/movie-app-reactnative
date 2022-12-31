@@ -1,15 +1,18 @@
 import { View, Text, StyleSheet, Image } from 'react-native'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { black } from '../utils/Colors'
 import { useNavigation } from '@react-navigation/native'
 
 const Splash = () => {
+
   const navigation = useNavigation();
+
   useEffect(() => {
     setTimeout(() => {
-      navigation.navigate('Login')
+      navigation.navigate('SelectUser')
     }, 4000);
   }, [])
+
   return (
     <View style={myStyle.container}>
       <Image source={require('../img/gif/loading.gif')} style={{width:200,height:200}} />

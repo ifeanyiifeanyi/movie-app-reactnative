@@ -9,6 +9,7 @@ import Login from './src/screens/Login'
 import Register from './src/screens/Register'
 import RecoverPassword from './src/screens/RecoverPassword'
 import VideoDetail from './src/screens/VideoDetail'
+import VerifyEmail from './src/screens/VerifyEmail'
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,11 @@ const App = () => {
                 <Stack.Screen 
                     name='Register' 
                     component={Register} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='VerifyEmail' 
+                    component={VerifyEmail} 
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen 

@@ -52,16 +52,28 @@ export default function Login() {
                         await AsyncStorage.setItem('username', response.data.username.name);
                         await AsyncStorage.setItem('name', response.data.username.username);
                         await AsyncStorage.setItem('email', response.data.username.email);
+                        await AsyncStorage.setItem('userid', response.data.username.userid);
+                        await AsyncStorage.setItem('status', response.data.username.status);
+                        await AsyncStorage.setItem('subscription_id', response.data.username.subscription_id);
                     } catch (error) {
                         console.log(error)
                     }
 
 
-                    //timer before redirect if login success 
-                    setTimeout(() => {
-                        navigation.navigate('SelectUser', {username: response.data.username.name});
-                        setSuccess("");
-                    }, 4000);
+                    if(response.data.username.status === 1){
+                        //timer before redirect if login success 
+                        setTimeout(() => {
+                            navigation.navigate('SelectUser');
+                            setSuccess("");
+                        }, 4000);
+                    }else{
+                        // redirect to verify if account has not verify
+                        setTimeout(() => {
+                            navigation.navigate('VerifyEmail');
+                            setSuccess("");
+                        }, 4000);
+                    }
+                   
 
 
                 } else {
