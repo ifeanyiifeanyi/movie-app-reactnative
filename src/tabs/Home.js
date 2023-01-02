@@ -1,4 +1,4 @@
-import { FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import {ImageBackground, FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useNavigation } from '@react-navigation/native'
@@ -20,8 +20,8 @@ const IMAGES = [
 const Home = () => {
   const navigation = useNavigation();
 
-  
-  
+
+
   //bapitsm
   //first holy
   //catism
@@ -33,16 +33,19 @@ const Home = () => {
   const [videoListByRating, SetVideoListByRating] = useState([]);
   const [videoListByCategory, SetVideoListByCategory] = useState([]);
 
+  const [firstCategory, setFirstCategory] = useState([])
+  const [secondCategory, setSecondCategory] = useState([])
+  const [thirdCategory, setThirdCategory] = useState([])
+
   const [index, setIndex] = useState(0)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((index + 1) % 3)
+    }, 2000);
 
-useEffect(()=>{
-  const interval = setInterval(() => {
-    setIndex((index+1)%3)
-  }, 2000);
+    return () => { interval && clearInterval(interval) }
+  }, [])
 
-  return ()=> { interval && clearInterval(interval) }
-}, [])
-  
   // use effect function calls
   useEffect(() => {
     getCategories();
@@ -50,6 +53,9 @@ useEffect(()=>{
     getVideos();
     getVideosByRating();
     getVideosByCategory();
+    firstCategorys();
+    secondCategorys();
+    thirdCategorys();
   }, []);
 
   //  fetch id and thumbnail from api
@@ -86,7 +92,7 @@ useEffect(()=>{
       SetVideoListByRating(res.data);
       console.log(res.data)
     }).catch((err) => {
-      console.log(err)
+      console.log(err, "video by rating api error")
     })
   }
 
@@ -99,7 +105,44 @@ useEffect(()=>{
       setList(res.data);
       console.log(response)
     }).catch((error) => {
-      console.log("Api call error");
+      console.log("all category Api call error");
+    });
+  }
+
+  //get first categories from api
+  const firstCategorys = () => {
+    axios({
+      url: `${BASE_URL}/api/firstCategory`,
+      method: "GET"
+    }).then(res => {
+      setFirstCategory(res.data);
+      // console.log(response)
+    }).catch((error) => {
+      console.log("first category Api call error");
+    });
+  }
+  //get second categories from api
+  const secondCategorys = () => {
+    axios({
+      url: `${BASE_URL}/api/secondCategory`,
+      method: "GET"
+    }).then(res => {
+      setSecondCategory(res.data);
+      // console.log(response)
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+  //get second categories from api
+  const thirdCategorys = () => {
+    axios({
+      url: `${BASE_URL}/api/thirdCategory`,
+      method: "GET"
+    }).then(res => {
+      setThirdCategory(res.data);
+      // console.log(response)
+    }).catch((error) => {
+      console.log("second category Api call error");
     });
   }
 
@@ -114,7 +157,7 @@ useEffect(()=>{
           }
         })
     } catch (error) {
-
+      console.log(error)
     }
   }
 
@@ -131,32 +174,28 @@ useEffect(()=>{
               {list.map((item, index) => {
                 return (
                   <TouchableOpacity style={styles.categoryTab} key={item.id}>
-                    <Text style={styles.categoryText}>{item.name}</Text>
+                    <Text style={styles.categoryText}>{item.name ? item.name : "Loading .."}</Text>
                   </TouchableOpacity>
                 )
               })}
-
-
-
             </View>
-
-           
           </View>
           <View style={styles.header}>
             <Image source={require('../img/logo/loginlogo.png')} style={styles.headerLogo} />
             <View style={styles.rightHeader}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => {navigation.navigate('SelectUser')}}>
                 <Image source={require('../img/logo/1.jpg')} style={styles.rightHeaderIcon} />
-                <Text style={{ color: 'white', textTransform: 'capitalize' }}>{name}</Text>
+                <Text style={{ color: 'white', textTransform: 'capitalize' }}>{name ? name : "Loading .."}</Text>
               </TouchableOpacity>
             </View>
           </View>
+
           <View style={styles.secondView}>
-            <Text style={styles.customTitle}>Next watch</Text>
-            <View style={{ marginTop: 10 }}>
+            <View style={{ marginTop: 190 }}>
+              <Text style={[styles.customTitle, { marginTop: 20 }]}>{thirdCategory.name ? thirdCategory.name : "Loading ..."}</Text>
               <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoList} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
                 return (
-                  <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { id: item.id }) }}>
+                  <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
 
                     <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={{ width: 150, height: 170, borderRadius: 10 }} />
 
@@ -175,11 +214,16 @@ useEffect(()=>{
                 )
               }} />
             </View>
-            <Text style={styles.customTitle}>Trending videos ...</Text>
+
+
+         
+
             <View style={{ marginTop: 10 }}>
+              <Text style={styles.customTitle}>{secondCategory.name ? secondCategory.name : "Loading ..."}</Text>
+
               <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByRating} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
                 return (
-                  <TouchableOpacity style={styles.trendingVideoItem}>
+                  <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
                     <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
                     <View style={styles.videoLabel}>
                       <Text style={styles.videoLabelText}>{item.rateName}</Text>
@@ -188,19 +232,22 @@ useEffect(()=>{
                 )
               }} />
             </View>
-            <Text style={[styles.customTitle, { marginTop: 20 }]}>Special Selections ...</Text>
+
+
+           
             <View style={{ marginTop: 5, marginBottom: 100 }}>
-            <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByCategory} horizontal renderItem={({ item, image }) => {
-              return (
-                <TouchableOpacity style={styles.trendingVideoItem}>
-                  <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
-                  <View style={styles.videoLabel}>
-                    <Text style={styles.videoLabelText}>{item.catName}</Text>
-                  </View>
-                </TouchableOpacity>
-              )
-            }} />
-          </View>
+            <Text style={styles.customTitle}>{firstCategory.name ? firstCategory.name : "Loading ..."}</Text>
+              <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByCategory} horizontal renderItem={({ item, image }) => {
+                return (
+                  <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
+                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
+                    <View style={styles.videoLabel}>
+                      <Text style={styles.videoLabelText}>{item.catName}</Text>
+                    </View>
+                  </TouchableOpacity>
+                )
+              }} />
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -246,16 +293,17 @@ const styles = StyleSheet.create({
   },
   topView: {
     width: '100%',
-    height: 300,
+    height: 520,
     position: 'absolute',
     top: 0,
+    justifyContent: 'center',
   },
   categoryView: {
     flexDirection: 'row',
     width: '80%',
     alignSelf: 'center',
     justifyContent: 'space-around',
-    marginTop: 120,
+    // marginTop: 20,
   },
   categoryTab: {
     width: '30%',
@@ -265,6 +313,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     color: 'gold',
+    fontWeight: 'bold',
     fontSize: 16,
   },
   topViewBottomView: {

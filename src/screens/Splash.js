@@ -9,7 +9,7 @@ const Splash = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      navigation.navigate('VerifyEmail')
+      navigation.navigate('HomeScreen')
     }, 4000);
   }, [])
 
