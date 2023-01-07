@@ -49,14 +49,14 @@ export default function Login() {
                         await AsyncStorage.setItem('name', response.data.username.username);
                         await AsyncStorage.setItem('email', response.data.username.email);
                         await AsyncStorage.setItem('userid', response.data.username.userid);
-                        await AsyncStorage.setItem('status', response.data.username.status);
+                        await AsyncStorage.setItem('status', JSON.stringify(response.data.username.status));
                         await AsyncStorage.setItem('subscription_id', response.data.username.subscription_id);
                     } catch (error) {
                         console.log(error)
                     }
 
                     // if user account has not been verified !
-                    if(response.data.username.status === 1){
+                    if(response.data.username.status == "1"){
                         //timer before redirect if login success 
                         setTimeout(() => {
                             navigation.navigate('SelectUser');

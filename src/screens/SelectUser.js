@@ -107,7 +107,7 @@ const SelectUser = ({ navigation }) => {
               </TouchableOpacity>
             ) :
             (
-              <TouchableOpacity onPress={() => { }}>
+              <TouchableOpacity onPress={() => navigation.navigate('PaymentPlan')}>
                 <View style={styles.userDetailSubscribeNotDone}>
                   <Image source={require('../img/logo/subscription.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
                   <Text> Please Subscribe</Text>

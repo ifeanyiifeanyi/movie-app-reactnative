@@ -24,7 +24,7 @@ const Splash = () => {
       // navigation.navigate('');
 
       if (isConnected) {
-        navigation.navigate('HomeScreen');
+        navigation.navigate('PaymentPlan');
       } else {
         Alert.alert("Connection Failed!",[
           {

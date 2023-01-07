@@ -10,6 +10,7 @@ import Register from './src/screens/Register'
 import RecoverPassword from './src/screens/RecoverPassword'
 import VideoDetail from './src/screens/VideoDetail'
 import VerifyEmail from './src/screens/VerifyEmail'
+import PaymentPlan from './src/screens/PaymentPlan'
 
 const Stack = createStackNavigator();
 
@@ -55,6 +56,11 @@ const App = () => {
                 <Stack.Screen 
                     name='RecoverPassword' 
                     component={RecoverPassword} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='PaymentPlan' 
+                    component={PaymentPlan} 
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
