@@ -11,9 +11,7 @@ export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const [errorMessage, setError] = useState({
-        errorName: "",
-    });
+    const [errorMessage, setError] = useState({errorName: ""});
     const [success, setSuccess] = useState("");
 
 
@@ -32,8 +30,6 @@ export default function Login() {
                 username: username,
                 password: password,
             }).then(async response => {
-                // console.log(response.data)
-
                 // if login data return true 
                 if (response.data.status) {
                     console.log(response.data.message)
@@ -59,7 +55,7 @@ export default function Login() {
                         console.log(error)
                     }
 
-
+                    // if user account has not been verified !
                     if(response.data.username.status === 1){
                         //timer before redirect if login success 
                         setTimeout(() => {
@@ -73,9 +69,6 @@ export default function Login() {
                             setSuccess("");
                         }, 4000);
                     }
-                   
-
-
                 } else {
                     console.log(response.data.message)
                     // set api error msg 
@@ -86,7 +79,6 @@ export default function Login() {
             }).catch(e => console.log(e.message))
         }
     }
-
     return (
 
         <View style={styles.container}>

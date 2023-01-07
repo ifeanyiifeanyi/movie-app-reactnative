@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Image, TextInput,  TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Image, TextInput,  TouchableOpacity, Alert } from "react-native";
 import axios from "axios";
 import { BASE_URL } from '@env';
 import * as Device from 'expo-device'
@@ -18,27 +18,20 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [errorMessage, setError] = useState({
-    errorName: "",
-    errorUsername: "",
-    errorEmail: "",
-    errorPassword: ""
-  });
+  // error messages
+  const [errorMessage, setError] = useState({errorName: "",errorUsername: "",errorEmail: "",errorPassword: ""});
+
+  // success message
   const [success, setSuccess] = useState("");
-
-
-
 
   const register = async (name, username, email, password) => {
     if (!name.trim() || !username.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-      alert("Please enter all required fields!");
-      console.log(`${BASE_URL}/api/register`);
+      Alert.alert("All fields are required!");
       return;
     } else if (password.trim() !== confirmPassword.trim()) {
-      alert("Password does not match")
+      Alert.alert("Passwords do not match!")
       return;
-    }
-    else {
+    }else {
       axios.post(`${BASE_URL}/api/register`, {
         name: name,
         username: username,
@@ -47,29 +40,26 @@ export default function Register() {
         devicename: Device.modelName
       }).then(response => {
         console.log(response.data)
-
+        // success response
         if (response.data.status) {
-
           setError({
             errorName: "",
             errorUsername: "",
             errorEmail: "",
             errorPassword: ""
           });
-
           setSuccess("Registration Successfull");
           setName("");
           setUsername("");
           setEmail("");
           setPassword("");
           setConfirmPassword("");
-
           setTimeout(() => {
-            navigation.navigate('Login')
+            // redirect after registration
+            navigation.navigate('Login', )
           }, 4000);
-
-
         } else {
+          // if error: set error messages
           setError({
             errorName: response.data.message.name ? response.data.message.name[0] : "",
             errorUsername: response.data.message.username ? response.data.message.username[0] : "",
@@ -80,7 +70,6 @@ export default function Register() {
       }).catch(e => console.log(e.message))
     }
   }
-
 
   return (
 
@@ -154,8 +143,6 @@ export default function Register() {
         </Text>
       )}
 
-
-
       <View style={styles.inputView}>
         <TextInput
           style={styles.TextInput}
@@ -167,19 +154,13 @@ export default function Register() {
         />
       </View>
 
-
-
       <TouchableOpacity onPress={() => { navigation.navigate("Login") }}>
         <Text style={styles.forgot_button}>A Member? <Text style={{ color: 'teal' }}>Sign In</Text></Text>
       </TouchableOpacity>
-
       
-        <TouchableOpacity onPress={() => register(name, username, email, password)} style={styles.loginBtn}>
+      <TouchableOpacity onPress={() => register(name, username, email, password)} style={styles.loginBtn}>
           <Text style={{ color: '#ddd', fontSize: 18 }}>SIGN UP</Text>
-        </TouchableOpacity>
-      
-
-
+      </TouchableOpacity>
     </View>
   );
 }

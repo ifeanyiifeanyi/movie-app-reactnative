@@ -1,4 +1,4 @@
-import {ImageBackground, FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, DevSettings } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useNavigation } from '@react-navigation/native'
@@ -37,6 +37,7 @@ const Home = () => {
   const [secondCategory, setSecondCategory] = useState([])
   const [thirdCategory, setThirdCategory] = useState([])
 
+  // check images for banner on reload
   const [index, setIndex] = useState(0)
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,15 +49,38 @@ const Home = () => {
 
   // use effect function calls
   useEffect(() => {
-    getCategories();
-    getData();
-    getVideos();
-    getVideosByRating();
-    getVideosByCategory();
-    firstCategorys();
-    secondCategorys();
-    thirdCategorys();
+    
+      getCategories();
+      getData();
+      getVideos();
+      getVideosByRating();
+      getVideosByCategory();
+      firstCategorys();
+      secondCategorys();
+      thirdCategorys();
   }, []);
+
+  // fetch async stored data
+  const getData = () => {
+    try {
+      AsyncStorage.getItem('username')
+        .then(value => {
+          if (value != null) {
+            setName(value);
+          }
+        })
+    } catch (error) {
+      console.log(error)
+      // Alert.alert('Something went wrong. Please try again later', err.message, [
+      //   {
+      //     text: "Try Again",
+      //     onPress: () => DevSettings.reload(),
+      //     style: "cancel"
+      //   }
+
+      // ]);
+    }
+  }
 
   //  fetch id and thumbnail from api
   const getVideos = () => {
@@ -68,6 +92,13 @@ const Home = () => {
       console.log(res.data)
     }).catch((err) => {
       console.log(err)
+      // Alert.alert('Something went wrong. Please try again later', err.message, [
+      //   {
+      //     text: "Try Again",
+      //     onPress: () => DevSettings.reload(),
+      //     style: "cancel"
+      //   }
+      // ]);
     })
   }
 
@@ -80,10 +111,11 @@ const Home = () => {
       SetVideoListByCategory(res.data);
       console.log(res.data)
     }).catch((err) => {
-      console.log(err)
+      console.log(err);
     })
   }
 
+  // get second rows of video based on rating
   const getVideosByRating = () => {
     axios({
       url: `${BASE_URL}/api/allvideobyrating`,
@@ -93,6 +125,7 @@ const Home = () => {
       console.log(res.data)
     }).catch((err) => {
       console.log(err, "video by rating api error")
+      
     })
   }
 
@@ -104,8 +137,9 @@ const Home = () => {
     }).then(res => {
       setList(res.data);
       console.log(response)
-    }).catch((error) => {
+    }).catch((err) => {
       console.log("all category Api call error");
+     
     });
   }
 
@@ -116,8 +150,7 @@ const Home = () => {
       method: "GET"
     }).then(res => {
       setFirstCategory(res.data);
-      // console.log(response)
-    }).catch((error) => {
+    }).catch((err) => {
       console.log("first category Api call error");
     });
   }
@@ -128,9 +161,8 @@ const Home = () => {
       method: "GET"
     }).then(res => {
       setSecondCategory(res.data);
-      // console.log(response)
-    }).catch((error) => {
-      console.log(error);
+    }).catch((err) => {
+      console.log(err);
     });
   }
   //get second categories from api
@@ -147,19 +179,7 @@ const Home = () => {
   }
 
 
-  // fetch async stored data
-  const getData = () => {
-    try {
-      AsyncStorage.getItem('username')
-        .then(value => {
-          if (value != null) {
-            setName(value);
-          }
-        })
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  
 
   return (
     <SafeAreaView>
@@ -183,7 +203,7 @@ const Home = () => {
           <View style={styles.header}>
             <Image source={require('../img/logo/loginlogo.png')} style={styles.headerLogo} />
             <View style={styles.rightHeader}>
-              <TouchableOpacity onPress={() => {navigation.navigate('SelectUser')}}>
+              <TouchableOpacity onPress={() => { navigation.navigate('SelectUser') }}>
                 <Image source={require('../img/logo/1.jpg')} style={styles.rightHeaderIcon} />
                 <Text style={{ color: 'white', textTransform: 'capitalize' }}>{name ? name : "Loading .."}</Text>
               </TouchableOpacity>
@@ -216,7 +236,7 @@ const Home = () => {
             </View>
 
 
-         
+
 
             <View style={{ marginTop: 10 }}>
               <Text style={styles.customTitle}>{secondCategory.name ? secondCategory.name : "Loading ..."}</Text>
@@ -234,9 +254,9 @@ const Home = () => {
             </View>
 
 
-           
+
             <View style={{ marginTop: 5, marginBottom: 100 }}>
-            <Text style={styles.customTitle}>{firstCategory.name ? firstCategory.name : "Loading ..."}</Text>
+              <Text style={styles.customTitle}>{firstCategory.name ? firstCategory.name : "Loading ..."}</Text>
               <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByCategory} horizontal renderItem={({ item, image }) => {
                 return (
                   <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
