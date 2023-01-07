@@ -82,13 +82,15 @@ export default function VideoDetail({ route }) {
         <ScrollView>
             <View style={styles.videoContainer}>
                 <View style={styles.videoBanner}>
-                    {loading ?
+                    { 
+                        loading ?
                         (
-                            {/* <Image
-                                source={require('../img/logo/loader0.gif')}
-                                style={styles.videoImage}
-                            /> */}
-                            <Text style={styles.videoImage}>Loading ....</Text>
+                            (
+                                <Image
+                                    source={require('../img/logo/loader0.gif')}
+                                    style={styles.videoImage}
+                                />
+                            )
                         ) : (
                             <Video
                                 style={styles.videoImage}
@@ -104,8 +106,6 @@ export default function VideoDetail({ route }) {
                                 onPlaybackStatusUpdate={status => setStatus(() => status)}
                             />
                         )
-
-
                     }
 
                     <View style={styles.videoBannerText}>
