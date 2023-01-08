@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const SelectUser = ({ navigation }) => {
 
   const [name, setName] = useState('');
+  const [uId, setUId] = useState('');
   const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [userid, setuserId] = useState('');
@@ -23,8 +24,19 @@ const SelectUser = ({ navigation }) => {
         .then(value => {
           if (value != null) {
             setName(value);
+          }else{
+            navigation.navigate('Login')
           }
         })
+
+
+      AsyncStorage.getItem('uid')
+        .then(value => {
+          if (value != null) {
+            setUId(value);
+          }
+        })
+
       AsyncStorage.getItem('username')
         .then(value => {
           if (value != null) {
@@ -70,7 +82,7 @@ const SelectUser = ({ navigation }) => {
         <View style={{ alignItems: 'center' }}>
           <Image source={require('../img/logo/1.jpg')} style={{ width: 140, height: 140, borderRadius: 10, marginTop: -70 }} />
           <Text style={{ fontSize: 25, fontWeight: 'bold', padding: 10, color: 'teal' }}>{name ? name : "Unknown"}</Text>
-          <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'grey' }}>{userid ? userid : "Not Set"}</Text>
+          <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'grey' }}>{userid ? userid : "Not Set"} :: {uId}</Text>
         </View>
 
         <View style={styles.viewVideos}>

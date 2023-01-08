@@ -1,5 +1,7 @@
 import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useEffect, useRef } from "react";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
 import Splash from './src/screens/Splash'
@@ -11,10 +13,12 @@ import RecoverPassword from './src/screens/RecoverPassword'
 import VideoDetail from './src/screens/VideoDetail'
 import VerifyEmail from './src/screens/VerifyEmail'
 import PaymentPlan from './src/screens/PaymentPlan'
+import ConfirmPayment from './src/screens/ConfirmPayment'
 
 const Stack = createStackNavigator();
 
 const App = () => {
+    
   return (
         <NavigationContainer>
             <Stack.Navigator>
@@ -61,6 +65,11 @@ const App = () => {
                 <Stack.Screen 
                     name='PaymentPlan' 
                     component={PaymentPlan} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='ConfirmPayment' 
+                    component={ConfirmPayment} 
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

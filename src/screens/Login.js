@@ -45,11 +45,13 @@ export default function Login() {
                     setUsername("");
                     setPassword("");
                     try {
+                        await AsyncStorage.setItem('uid', JSON.stringify(response.data.username.id));
                         await AsyncStorage.setItem('username', response.data.username.name);
                         await AsyncStorage.setItem('name', response.data.username.username);
                         await AsyncStorage.setItem('email', response.data.username.email);
                         await AsyncStorage.setItem('userid', response.data.username.userid);
                         await AsyncStorage.setItem('status', JSON.stringify(response.data.username.status));
+                        // remember to use this to hide videos if null
                         await AsyncStorage.setItem('subscription_id', response.data.username.subscription_id);
                     } catch (error) {
                         console.log(error)

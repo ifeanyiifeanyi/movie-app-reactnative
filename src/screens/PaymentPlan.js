@@ -16,6 +16,7 @@ const PaymentPlan = ({ navigation }) => {
 
   const [name, setName] = useState('');
   const [username, setUserName] = useState('');
+  const [uId, setUId] = useState('');
   const [email, setEmail] = useState('');
   const [userid, setuserId] = useState('');
   const [subscriptionId, setSubscriptionId] = useState('');
@@ -26,10 +27,19 @@ const PaymentPlan = ({ navigation }) => {
 
   const getData = () => {
     try {
+      AsyncStorage.getItem('uid')
+      .then(value => {
+        if (value != null) {
+          setUId(value);
+        }
+      })
+
       AsyncStorage.getItem('name')
         .then(value => {
           if (value != null) {
             setName(value);
+          }else{
+            navigation.navigate('Login')
           }
         })
       AsyncStorage.getItem('username')
@@ -60,6 +70,8 @@ const PaymentPlan = ({ navigation }) => {
       console.log(err.message)
     }
   }
+
+
 
   useEffect(() => {
     async function fetchPaymentPlan() {
@@ -98,9 +110,12 @@ const PaymentPlan = ({ navigation }) => {
       <ScrollView>
         <View style={{ padding: 10, backgroundColor: '#000', width: '100%', height: screenHeight }}>
           <Image source={require('../img/logo/loginlogo.png')} style={{ width: 70, height: 90, marginTop: 30 }} />
-          <Text style={{ fontSize: 25, marginTop: 15, alignSelf: 'center', marginBottom: 30, color: '#ddd' }}>Playment Plans</Text>
+          <Text style={{ fontSize: 25, marginTop: 15, alignSelf: 'center', marginBottom: 30, color: '#ddd' }}>Playment Plans {uId}</Text>
 
-          <TouchableOpacity styl={{ marginTop: 15, alignSelf: 'center', marginBottom: 40 }}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('SelectUser')}
+            styl={{ marginTop: 15, alignSelf: 'center', marginBottom: 40 }}
+          >
             <Image source={require('../img/logo/1.jpg')} style={{ alignSelf: 'center', width: 45, height: 45, }} />
             <Text style={{ fontSize: 14, marginTop: 15, alignSelf: 'center', marginBottom: 30, color: '#ddd' }}>Back to profile</Text>
           </TouchableOpacity>
@@ -111,7 +126,16 @@ const PaymentPlan = ({ navigation }) => {
               plans.map((value, index) => {
                 const colorPalette = colorPalettes[index % colorPalettes.length];
                 return (
-                  <TouchableOpacity>
+                  <TouchableOpacity 
+                    onPress={() => navigation.navigate('ConfirmPayment', {
+                      userId: uId,
+                      paymentPlanId: value.id,
+                      duration_in_number: value.duration_in_number,
+                      duration_in_name: value.duration_in_name,
+                      amount: value.amount,
+                      subName: value.name,
+                    })} 
+                    key={index}>
                     <LinearGradient
                       // Button Linear Gradient
                       colors={colorPalette}
@@ -135,7 +159,6 @@ const PaymentPlan = ({ navigation }) => {
                           <Text style={{ fontSize: 12, color: '#ddd' }}>Subscribe</Text>
                         </View>
                       </View>
-
                     </LinearGradient>
                   </TouchableOpacity>
                 )
