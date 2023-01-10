@@ -1,10 +1,11 @@
 import React from 'react'
-import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, ScrollView, SafeAreaView, Dimensions } from 'react-native';
+import { ImageBackground, View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Image, ScrollView, SafeAreaView, Dimensions, Alert } from 'react-native';
 import { useEffect, useState, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL, PAYSTACK_PUBLIC_KEY } from '@env';
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from "axios";
 import { Paystack, paystackProps } from 'react-native-paystack-webview';
 
 
@@ -22,7 +23,7 @@ export default function ConfirmPayment({ props, route }) {
   const { amount } = route.params;
   const { subName } = route.params;
 
-
+  const [getReference, setGetReference] = useState();
 
   const [name, setName] = useState('');
   const [uId, setUId] = useState('');
@@ -93,23 +94,76 @@ export default function ConfirmPayment({ props, route }) {
           amount={JSON.stringify(amount)}
           onCancel={(e) => {
             // handle response here
-            console.log(e);
+            console.log(e.status);
+            if (e.status) {
+              Alert.alert(
+                'Cancelled',
+                'Transaction was cancelled!',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => navigation.navigate('PaymentPlan'),
+                  },
+                ],
+                { cancelable: false },
+              );
+            }
           }}
           onSuccess={(res) => {
+            console.log(res.data.transactionRef.reference)
             // handle response here
-            console.log(res)
+            axios.post(`${BASE_URL}/api/payment`, {
+              userId: uId,
+              paymentPlanId: paymentPlanId,
+              duration: duration_in_number,
+              transactionReference: res.data.transactionRef.reference,
+              payment_type: "OnlinePayment",
+              amount: amount,
+            }).then(async response => {
+              if (response) {
+                console.log(response.data);
+                AsyncStorage.setItem('subscription_id', JSON.stringify(paymentPlanId))
+                  .then(() => console.log('Value updated!'))
+                  .catch(error => console.error(error));
+
+                Alert.alert(
+                  'Success!',
+                  `Your have successfully subscribed to ${subName}`,
+                  [
+                    {
+                      text: 'OK',
+                      onPress: () => navigation.navigate('SelectUser'),
+                    },
+                  ],
+                  { cancelable: false },
+                );
+              }
+
+            }).catch(e => {
+              console.log("failed transaction:: ", e.message);
+              Alert.alert(
+                  'Failed!',
+                  `Error: ${e.message}`,
+                  [
+                    {
+                      text: 'OK',
+                      onPress: () => navigation.navigate('PaymentPlan'),
+                    },
+                  ],
+                  { cancelable: false },
+                );
+            })
+
+
           }}
           ref={paystackWebViewRef}
         />
-<TouchableOpacity>
-<Text>Back to plans</Text>
-
-</TouchableOpacity>
-        <View>
-          <LinearGradient
-            colors={['#87CEEB', '#40B5AD']}
-            style={styles.paymentDetails}
-          >
+        <TouchableOpacity onPress={() => navigation.navigate("SelectUser")} style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+          <Image source={require('../img/logo/avatar.png')} style={{ width: 50, height: 50 }} />
+          <Text>Profile</Text>
+        </TouchableOpacity>
+        <View style={styles.paymentDetails}>
+          <ImageBackground source={require('../img/logo/blackwood.jpg')} style={{ resizeMode: 'cover', paddingLeft: 20, }}>
             <Text style={styles.title}>Payment Details</Text>
             <Text style={styles.text}>Userame: {name}</Text>
             <Text style={styles.text}>Email: {email}</Text>
@@ -117,9 +171,9 @@ export default function ConfirmPayment({ props, route }) {
             <Text style={styles.text}>Subscription: {subName}</Text>
             <Text style={styles.text}>Duration: {duration_in_name}</Text>
             <Text style={styles.text}>Amount: ₦ {amount}</Text>
-          </LinearGradient>
-        </View>
+          </ImageBackground>
 
+        </View>
         <TouchableOpacity onPress={() => paystackWebViewRef.current.startTransaction()}>
           <LinearGradient
             // Button Linear Gradient
@@ -136,7 +190,7 @@ export default function ConfirmPayment({ props, route }) {
         <Text style={styles.oR}>OR</Text>
         <View style={styles.lineThrough} />
 
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={() => { }}>
           <LinearGradient
             // Button Linear Gradient
             colors={['#900C3F', '#C70039', '#FF5733']}
@@ -165,15 +219,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   text: {
-    color: '#28282B',
+    color: '#ddd',
     fontSize: 15,
     marginBottom: 10,
+    fontWeight: 'bold',
   }
   ,
   paymentDetails: {
     padding: 20,
+    paddingLeft: 20,
     marginBottom: 30,
     borderRadius: 10,
+    width: '100%',
+    backgroundColor: 'rgba(100, 105, 90, 0.5)',
+    zIndex: 100
   },
   container: {
     flex: 1,
@@ -216,10 +275,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  btnManual:{
+  btnManual: {
     padding: 20,
-    color:'#ddd',
-    fontWeight:'bold',
-    borderRadius:8,
+    color: '#ddd',
+    fontWeight: 'bold',
+    borderRadius: 8,
   }
 });

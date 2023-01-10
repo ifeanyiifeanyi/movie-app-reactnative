@@ -82,7 +82,7 @@ const PaymentPlan = ({ navigation }) => {
         console.log(data);
         setPlans(data);
       } catch (err) {
-        console.error("error from calling plans", err.message);
+        console.error("error from calling plans :: ", err.message);
         setPlanError(err.message)
         // Alert.alert('Something went wrong. Please try again later', err.message, [
         //     {

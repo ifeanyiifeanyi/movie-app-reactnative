@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView } from 'react-native'
+import { ImageBackground, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,7 +24,7 @@ const SelectUser = ({ navigation }) => {
         .then(value => {
           if (value != null) {
             setName(value);
-          }else{
+          } else {
             navigation.navigate('Login')
           }
         })
@@ -78,68 +78,85 @@ const SelectUser = ({ navigation }) => {
           <View></View>
           <View></View>
         </View>
-
-        <View style={{ alignItems: 'center' }}>
-          <Image source={require('../img/logo/1.jpg')} style={{ width: 140, height: 140, borderRadius: 10, marginTop: -70 }} />
-          <Text style={{ fontSize: 25, fontWeight: 'bold', padding: 10, color: 'teal' }}>{name ? name : "Unknown"}</Text>
-          <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'grey' }}>{userid ? userid : "Not Set"} :: {uId}</Text>
-        </View>
-
-        <View style={styles.viewVideos}>
-          <View>
-            <TouchableOpacity style={styles.viewVideoOne} onPress={() => { navigation.navigate("HomeScreen") }}>
-              <Image source={require('../img/logo/videos.png')} style={{ width: 20, height: 20 }} />
-              <Text> Vidoes</Text>
-            </TouchableOpacity>
+        <ImageBackground source={require('../img/logo/blackwood.jpg')} style={{ resizeMode: 'cover', width:'100%' }}>
+          <View style={{ alignItems: 'center' }}>
+            <Image source={require('../img/logo/1.jpg')} style={{ width: 140, height: 140, borderRadius: 10, marginTop: -70 }} />
+            <Text style={{ fontSize: 25, fontWeight: 'bold', padding: 10, color: 'teal' }}>{name ? name : "Unknown"}</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'grey' }}>{userid ? userid : "Not Set"}</Text>
           </View>
-          <View>
-            <TouchableOpacity style={styles.viewVideoTwo} onPress={() => { "" }}>
-              <Image source={require('../img/logo/users.png')} style={{ width: 20, height: 20 }} />
-              <Text> Edit Profile</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
-        <View style={styles.userDetails}>
-          <Image source={require('../img/logo/users.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-          <Text> {username ? username : "No Username"}</Text>
-        </View>
-        <View style={styles.userDetails}>
-          <Image source={require('../img/logo/email.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-          <Text> {email ? email : "No Email"}</Text>
-        </View>
-        <View>
-          {subscriptionId && subscriptionId !== null ?
-            (
-              <TouchableOpacity onPress={() => { }}>
-                <View style={styles.userDetailSubscribeDone}>
-                  <Image source={require('../img/logo/subscription.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-                  <Text> Subscription(3 Months plan)</Text>
-                </View>
+          <View style={styles.viewVideos}>
+            <View>
+              {
+                subscriptionId && parseInt(subscriptionId) !== 0 ?
+                  (
+                    <TouchableOpacity
+                      style={styles.viewVideoOne}
+                      onPress={() => { navigation.navigate("HomeScreen") }}>
+                      <Image source={require('../img/logo/videos.png')} style={{ width: 20, height: 20 }} />
+                      <Text> Vidoes</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.viewVideoOne}
+                      onPress={() => { navigation.navigate("PaymentPlan") }}>
+                      <Image source={require('../img/logo/restricted-area.png')} style={{ width: 20, height: 20 }} />
+                      <Text> Access Denied</Text>
+                    </TouchableOpacity>
+                  )
+              }
+            </View>
+            <View>
+              <TouchableOpacity style={styles.viewVideoTwo} onPress={() => { "" }}>
+                <Image source={require('../img/logo/users.png')} style={{ width: 20, height: 20 }} />
+                <Text> Edit Profile</Text>
               </TouchableOpacity>
-            ) :
-            (
-              <TouchableOpacity onPress={() => navigation.navigate('PaymentPlan')}>
-                <View style={styles.userDetailSubscribeNotDone}>
-                  <Image source={require('../img/logo/subscription.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-                  <Text> Please Subscribe</Text>
-                </View>
-              </TouchableOpacity>
-            )
-          }
-        </View>
-        <TouchableOpacity onPress={() => { }}>
-          <View style={[styles.userDetails, { backgroundColor: '#21D190' }]}>
-            <Image source={require('../img/logo/padlock.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-            <Text> Change Password</Text>
+            </View>
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => { }}>
-          <View style={[styles.userDetails, { marginBottom: 20 }]}>
-            <Image source={require('../img/logo/log-out.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-            <Text> Logout</Text>
+
+          <View style={styles.userDetails}>
+            <Image source={require('../img/logo/users.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
+            <Text> {username ? username : "No Username"}</Text>
           </View>
-        </TouchableOpacity>
+          <View style={styles.userDetails}>
+            <Image source={require('../img/logo/email.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
+            <Text> {email ? email : "No Email"}</Text>
+          </View>
+          <View>
+            {
+              subscriptionId && parseInt(subscriptionId) !== 0 ?
+                (
+                  <TouchableOpacity onPress={() => { }}>
+                    <View style={styles.userDetailSubscribeDone}>
+                      <Image source={require('../img/logo/subscription.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
+                      <Text> Subscription(3 Months plan)</Text>
+                    </View>
+                  </TouchableOpacity>
+                ) :
+                (
+                  <TouchableOpacity onPress={() => navigation.navigate('PaymentPlan')}>
+                    <View style={styles.userDetailSubscribeNotDone}>
+                      <Image source={require('../img/logo/subscription.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
+                      <Text> Please Subscribe</Text>
+                    </View>
+                  </TouchableOpacity>
+                )
+            }
+          </View>
+          <TouchableOpacity onPress={() => { }}>
+            <View style={[styles.userDetails, { backgroundColor: '#21D190' }]}>
+              <Image source={require('../img/logo/padlock.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
+              <Text> Change Password</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { }}>
+            <View style={[styles.userDetails, { marginBottom: 20 }]}>
+              <Image source={require('../img/logo/log-out.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
+              <Text> Logout</Text>
+            </View>
+          </TouchableOpacity>
+
+        </ImageBackground>
       </ScrollView>
     </SafeAreaView>
   );

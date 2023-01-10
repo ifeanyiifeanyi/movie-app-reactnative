@@ -36,7 +36,7 @@ const Splash = () => {
       // navigation.navigate('');
 
       if (isConnected) {
-        navigation.navigate('PaymentPlan');
+        navigation.navigate('Login');
       } else {
         Alert.alert("Connection Failed!",[
           {

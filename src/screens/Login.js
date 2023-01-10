@@ -32,7 +32,7 @@ export default function Login() {
             }).then(async response => {
                 // if login data return true 
                 if (response.data.status) {
-                    console.log(response.data.message)
+                    console.log(response)
 
                     // set empty error msgs if login success 
                     setError({
@@ -52,13 +52,13 @@ export default function Login() {
                         await AsyncStorage.setItem('userid', response.data.username.userid);
                         await AsyncStorage.setItem('status', JSON.stringify(response.data.username.status));
                         // remember to use this to hide videos if null
-                        await AsyncStorage.setItem('subscription_id', response.data.username.subscription_id);
+                        await AsyncStorage.setItem('subscription_id', JSON.stringify(response.data.username.subscription_id));
                     } catch (error) {
                         console.log(error)
                     }
 
                     // if user account has not been verified !
-                    if(response.data.username.status == "1"){
+                    if(response.data.username.status === 1){
                         //timer before redirect if login success 
                         setTimeout(() => {
                             navigation.navigate('SelectUser');
@@ -78,7 +78,7 @@ export default function Login() {
                         errorName: response.data.message ? response.data.message : "",
                     });
                 }
-            }).catch(e => console.log(e.message))
+            }).catch(e => console.log("login message ",e.message))
         }
     }
     return (
