@@ -3,6 +3,8 @@ import { ImageBackground, View, Text, StyleSheet, TouchableOpacity, Image, Scrol
 import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BASE_URL } from '@env';
+
 
 
 const SelectUser = ({ navigation }) => {
@@ -13,6 +15,30 @@ const SelectUser = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [userid, setuserId] = useState('');
   const [subscriptionId, setSubscriptionId] = useState('');
+
+  // useEffect(() => {
+  //   async function fetchVideo() {
+  //     try {
+  //       // use video id to fetch video
+  //       const response = await fetch(`${BASE_URL}/api/activeUserPlan/${uId}`);
+  //       const data = await response.json();
+  //       setVideoData(data[0]);
+  //     } catch (err) {
+  //       console.error(err);
+  //       // Alert.alert('Something went wrong. Please try again later', err.message, [
+  //       //     {
+  //       //       text: "Try Again",
+  //       //       onPress: () => this.fetchVideo,
+  //       //       style: "cancel"
+  //       //     }
+
+  //       // ]);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  //   fetchVideo();
+  // }, []);
 
   useEffect(() => {
     getData();
@@ -78,7 +104,7 @@ const SelectUser = ({ navigation }) => {
           <View></View>
           <View></View>
         </View>
-        <ImageBackground source={require('../img/logo/blackwood.jpg')} style={{ resizeMode: 'cover', width:'100%' }}>
+        <ImageBackground source={require('../img/logo/blackwood.jpg')} style={{ resizeMode: 'cover', width: '100%' }}>
           <View style={{ alignItems: 'center' }}>
             <Image source={require('../img/logo/1.jpg')} style={{ width: 140, height: 140, borderRadius: 10, marginTop: -70 }} />
             <Text style={{ fontSize: 25, fontWeight: 'bold', padding: 10, color: 'teal' }}>{name ? name : "Unknown"}</Text>

@@ -45,6 +45,9 @@ export default function VideoDetail({ route }) {
         }
     }
 
+
+
+
     useEffect(() => {
         async function fetchVideo() {
             try {
@@ -68,6 +71,11 @@ export default function VideoDetail({ route }) {
         }
         fetchVideo();
     }, []);
+
+    
+
+
+
 
     return (
         <ScrollView>

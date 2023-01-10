@@ -83,7 +83,8 @@ const Home = () => {
   }
 
   //  fetch id and thumbnail from api
-  const getVideos = () => {
+  const getVideos = async () => {
+
     axios({
       url: `${BASE_URL}/api/allvideo`,
       method: "GET"
@@ -103,7 +104,7 @@ const Home = () => {
   }
 
   // get video by categories
-  const getVideosByCategory = () => {
+  const getVideosByCategory = async () => {
     axios({
       url: `${BASE_URL}/api/allvideobycategory`,
       method: "GET"
@@ -116,7 +117,7 @@ const Home = () => {
   }
 
   // get second rows of video based on rating
-  const getVideosByRating = () => {
+  const getVideosByRating = async () => {
     axios({
       url: `${BASE_URL}/api/allvideobyrating`,
       method: "GET"
@@ -130,7 +131,7 @@ const Home = () => {
   }
 
   //get categories from api
-  const getCategories = () => {
+  const getCategories = async () => {
     axios({
       url: `${BASE_URL}/api/categories`,
       method: "GET"
@@ -144,7 +145,7 @@ const Home = () => {
   }
 
   //get first categories from api
-  const firstCategorys = () => {
+  const firstCategorys = async () => {
     axios({
       url: `${BASE_URL}/api/firstCategory`,
       method: "GET"
@@ -155,7 +156,7 @@ const Home = () => {
     });
   }
   //get second categories from api
-  const secondCategorys = () => {
+  const secondCategorys = async () => {
     axios({
       url: `${BASE_URL}/api/secondCategory`,
       method: "GET"
@@ -166,7 +167,7 @@ const Home = () => {
     });
   }
   //get second categories from api
-  const thirdCategorys = () => {
+  const thirdCategorys = async () => {
     axios({
       url: `${BASE_URL}/api/thirdCategory`,
       method: "GET"
