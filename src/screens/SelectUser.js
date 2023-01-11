@@ -1,11 +1,11 @@
 import React from 'react'
-import { ImageBackground, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView } from 'react-native'
+import { Alert, ImageBackground, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
 
-
+// //
 
 const SelectUser = ({ navigation }) => {
 
@@ -16,29 +16,35 @@ const SelectUser = ({ navigation }) => {
   const [userid, setuserId] = useState('');
   const [subscriptionId, setSubscriptionId] = useState('');
 
-  // useEffect(() => {
-  //   async function fetchVideo() {
-  //     try {
-  //       // use video id to fetch video
-  //       const response = await fetch(`${BASE_URL}/api/activeUserPlan/${uId}`);
-  //       const data = await response.json();
-  //       setVideoData(data[0]);
-  //     } catch (err) {
-  //       console.error(err);
-  //       // Alert.alert('Something went wrong. Please try again later', err.message, [
-  //       //     {
-  //       //       text: "Try Again",
-  //       //       onPress: () => this.fetchVideo,
-  //       //       style: "cancel"
-  //       //     }
+  const [userPlan, setUserPlan] = useState();
 
-  //       // ]);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  //   fetchVideo();
-  // }, []);
+  useEffect(() => {
+    async function userActivePlan() {
+      try {
+        // use user id to fetch active plan
+        const response = await fetch(`${BASE_URL}/api/userActivePlan/${uId}`);
+        const data = await response.json();
+        console.log(data)
+        setUserPlan(data[0]);
+      } catch (err) {
+        console.error(err);
+        Alert.alert('Something went wrong. Please try again later:: ', err.message, [
+          {
+            text: "Try Again",
+            onPress: () => this.userActivePlan,
+            style: "cancel"
+          }
+
+        ]);
+      } finally {
+        // setLoading(false);
+      }
+    }
+    setTimeout(() => {
+      userActivePlan();
+    }, 3000);
+
+  }, []);
 
   useEffect(() => {
     getData();
@@ -114,6 +120,7 @@ const SelectUser = ({ navigation }) => {
           <View style={styles.viewVideos}>
             <View>
               {
+
                 subscriptionId && parseInt(subscriptionId) !== 0 ?
                   (
                     <TouchableOpacity

@@ -76,7 +76,7 @@ export default function VideoDetail({ route }) {
 
 
 
-
+// COME BACK FOR LOADER IN PLAY BUTTON
     return (
         <ScrollView>
             <View style={styles.videoContainer}>
