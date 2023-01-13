@@ -10,17 +10,6 @@ const Splash = () => {
 
   const [isConnected, setIsConnected] = useState(true);
 
-//   useEffect(() => {
-//     // if !userId navigate to login page
-//     const checkAsyncStorage = async () => {
-//         const value = await AsyncStorage.getItem('userid');
-//         if (!value || value === 5) {
-//           navigation.navigate('Login');
-//         }
-//       }
-//       checkAsyncStorage();
-// }, []);
-
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -33,7 +22,6 @@ const Splash = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      // navigation.navigate('');
 
       if (isConnected) {
         navigation.navigate('Login');

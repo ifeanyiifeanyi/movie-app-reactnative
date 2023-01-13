@@ -61,7 +61,7 @@ export default function Login() {
                     if(response.data.username.status === 1){
                         //timer before redirect if login success 
                         setTimeout(() => {
-                            navigation.navigate('SelectUser');
+                            navigation.navigate('SelectUser', {user_id: response.data.username.id});
                             setSuccess("");
                         }, 4000);
                     }else{
@@ -78,7 +78,17 @@ export default function Login() {
                         errorName: response.data.message ? response.data.message : "",
                     });
                 }
-            }).catch(e => console.log("login message ",e.message))
+            }).catch(e => {
+                console.log("login message ",e.message);
+                Alert.alert('Something went wrong.', "Please try again later", [
+                    {
+                      text: "Try Again",
+                      onPress: () => this.userActivePlan,
+                      style: "cancel"
+                    }
+          
+                ]);
+            })
         }
     }
     return (

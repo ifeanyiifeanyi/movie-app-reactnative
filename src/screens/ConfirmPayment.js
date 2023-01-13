@@ -138,7 +138,6 @@ export default function ConfirmPayment({ props, route }) {
                   { cancelable: false },
                 );
               }
-
             }).catch(e => {
               console.log("failed transaction:: ", e.message);
               Alert.alert(

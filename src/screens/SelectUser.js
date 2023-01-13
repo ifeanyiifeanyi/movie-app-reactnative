@@ -1,14 +1,20 @@
 import React from 'react'
-import { Alert, ImageBackground, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView } from 'react-native'
-import { useEffect, useState } from 'react'
+import { Alert, ImageBackground, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native'
+import { useEffect, useState, useCallback } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
+import axios from "axios";
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 // //
 
-const SelectUser = ({ navigation }) => {
+const SelectUser = ({ navigation, route }) => {
 
+
+
+  // for async storage
   const [name, setName] = useState('');
   const [uId, setUId] = useState('');
   const [username, setUserName] = useState('');
@@ -16,40 +22,18 @@ const SelectUser = ({ navigation }) => {
   const [userid, setuserId] = useState('');
   const [subscriptionId, setSubscriptionId] = useState('');
 
+  // navigation and async storage id
+  const { user_id } = route.params ? route.params : uId;
+
+  // user if active plan if there is?
   const [userPlan, setUserPlan] = useState();
 
   useEffect(() => {
-    async function userActivePlan() {
-      try {
-        // use user id to fetch active plan
-        const response = await fetch(`${BASE_URL}/api/userActivePlan/${uId}`);
-        const data = await response.json();
-        console.log(data)
-        setUserPlan(data[0]);
-      } catch (err) {
-        console.error(err);
-        Alert.alert('Something went wrong. Please try again later:: ', err.message, [
-          {
-            text: "Try Again",
-            onPress: () => this.userActivePlan,
-            style: "cancel"
-          }
-
-        ]);
-      } finally {
-        // setLoading(false);
-      }
-    }
-    setTimeout(() => {
-      userActivePlan();
-    }, 3000);
-
-  }, []);
-
-  useEffect(() => {
+    userActivePlan();
     getData();
   }, [])
 
+  // set user asyn storage values
   const getData = () => {
     try {
       AsyncStorage.getItem('name')
@@ -66,6 +50,8 @@ const SelectUser = ({ navigation }) => {
         .then(value => {
           if (value != null) {
             setUId(value);
+          } else {
+            setUId(user_id)
           }
         })
 
@@ -98,7 +84,44 @@ const SelectUser = ({ navigation }) => {
     }
   }
 
+  // logout (clear async storage & redirect to login)
+  const handleLogout = async() => {
+    try {
+      // TODO: write api request to logout user from server
+        await AsyncStorage.clear(); //clear all data
+        Alert.alert('Successful.', "Bye for now!!", [
+          {
+            text: "Logout",
+            onPress: () => navigation.navigate('Login'), // navigate to login page,
+            style: "cancel"
+          }
+        ]);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
+// user active subscription by user id, 
+// id set by navigation params, and asynstorage params
+// in case of param delay for function call
+  function userActivePlan() {
+    axios({
+      url: `${BASE_URL}/api/userActivePlan/${user_id ? user_id : uId}`,
+      method: "GET"
+    }).then(res => {
+      setUserPlan(res.data[0]);
+      console.log(res.data)
+    }).catch((err) => {
+      console.log(err)
+      Alert.alert('Something went wrong.', "Please try again later", [
+        {
+          text: "Try Again",
+          onPress: () => userActivePlan,
+          style: "cancel"
+        }
+      ]);
+    })
+  }
 
   return (
     <SafeAreaView>
@@ -107,10 +130,10 @@ const SelectUser = ({ navigation }) => {
           <TouchableOpacity>
             <Image source={require('../img/logo/loginlogo.png')} style={{ width: 70, height: 90, marginTop: 60 }} />
           </TouchableOpacity>
-          <View></View>
-          <View></View>
         </View>
-        <ImageBackground source={require('../img/logo/blackwood.jpg')} style={{ resizeMode: 'cover', width: '100%' }}>
+
+        <ImageBackground source={require('../img/logo/blackwood.jpg')} 
+            style={{ resizeMode: 'cover', width: '100%' }}>
           <View style={{ alignItems: 'center' }}>
             <Image source={require('../img/logo/1.jpg')} style={{ width: 140, height: 140, borderRadius: 10, marginTop: -70 }} />
             <Text style={{ fontSize: 25, fontWeight: 'bold', padding: 10, color: 'teal' }}>{name ? name : "Unknown"}</Text>
@@ -120,21 +143,20 @@ const SelectUser = ({ navigation }) => {
           <View style={styles.viewVideos}>
             <View>
               {
-
                 subscriptionId && parseInt(subscriptionId) !== 0 ?
                   (
                     <TouchableOpacity
                       style={styles.viewVideoOne}
                       onPress={() => { navigation.navigate("HomeScreen") }}>
                       <Image source={require('../img/logo/videos.png')} style={{ width: 20, height: 20 }} />
-                      <Text> Vidoes</Text>
+                      <Text style={{color: '#ddd'}}> Vidoes</Text>
                     </TouchableOpacity>
                   ) : (
                     <TouchableOpacity
                       style={styles.viewVideoOne}
                       onPress={() => { navigation.navigate("PaymentPlan") }}>
                       <Image source={require('../img/logo/restricted-area.png')} style={{ width: 20, height: 20 }} />
-                      <Text> Access Denied</Text>
+                      <Text style={{color: '#ddd'}}> Access Denied</Text>
                     </TouchableOpacity>
                   )
               }
@@ -142,27 +164,56 @@ const SelectUser = ({ navigation }) => {
             <View>
               <TouchableOpacity style={styles.viewVideoTwo} onPress={() => { "" }}>
                 <Image source={require('../img/logo/users.png')} style={{ width: 20, height: 20 }} />
-                <Text> Edit Profile</Text>
+                <Text style={{color: '#ddd'}}> Edit Profile</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           <View style={styles.userDetails}>
             <Image source={require('../img/logo/users.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-            <Text> {username ? username : "No Username"}</Text>
+            <Text style={{color: '#ddd'}}> {username ? username : "No Username"}</Text>
           </View>
+
+
           <View style={styles.userDetails}>
             <Image source={require('../img/logo/email.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-            <Text> {email ? email : "No Email"}</Text>
+            <Text style={{color: '#ddd'}}> {email ? email : "No Email"}</Text>
           </View>
+
+
           <View>
             {
               subscriptionId && parseInt(subscriptionId) !== 0 ?
                 (
                   <TouchableOpacity onPress={() => { }}>
                     <View style={styles.userDetailSubscribeDone}>
-                      <Image source={require('../img/logo/subscription.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-                      <Text> Subscription(3 Months plan)</Text>
+                      <Image source={require('../img/logo/subscription.png')} style={{ width: 30, height: 30, marginLeft: 10 }} />
+
+                      {
+                        userPlan && userPlan ?
+                          (
+                            <TouchableOpacity style={{ marginLeft: 20 }}>
+                              <Text style={{marginBottom:10, color: 'royalblue', fontWeight:'bold'}}>
+                                {userPlan.name.toUpperCase()} { "(" +userPlan.duration_in_name+ ")" }
+                              </Text>
+                              <Text style={{marginBottom:10, color: '#ddd', fontWeight:'bold'}}>
+                                ₦ {userPlan.amount}
+                              </Text>
+                              <Text style={{marginBottom:10, color: '#ddd', fontWeight:'bold'}}>
+                                {userPlan.transaction_reference}
+                              </Text>
+                            </TouchableOpacity>
+                          ) :
+                          (
+                            <View style={[styles.container, styles.horizontal]}>
+                              <ActivityIndicator size="large" />
+                              <ActivityIndicator size="large" />
+                              <ActivityIndicator size="large" color="#0000ff" />
+                              <ActivityIndicator size="large" color="#00ff00" />
+                            </View>
+                          )
+                      }
+
                     </View>
                   </TouchableOpacity>
                 ) :
@@ -170,22 +221,35 @@ const SelectUser = ({ navigation }) => {
                   <TouchableOpacity onPress={() => navigation.navigate('PaymentPlan')}>
                     <View style={styles.userDetailSubscribeNotDone}>
                       <Image source={require('../img/logo/subscription.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-                      <Text> Please Subscribe</Text>
+                      <Text style={{color: '#ddd'}}> Please Subscribe</Text>
                     </View>
                   </TouchableOpacity>
                 )
             }
           </View>
+
+
           <TouchableOpacity onPress={() => { }}>
             <View style={[styles.userDetails, { backgroundColor: '#21D190' }]}>
               <Image source={require('../img/logo/padlock.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-              <Text> Change Password</Text>
+              <Text style={{color: '#ddd'}}> Change Password</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { }}>
-            <View style={[styles.userDetails, { marginBottom: 20 }]}>
+
+
+          <TouchableOpacity onPress={handleLogout}>
+            <View >
+            <LinearGradient
+            // Button Linear Gradient
+            colors={['#900C3F', '#C70039', '#FF5733']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[styles.userDetails, { marginBottom: 20,  }]}
+          >
               <Image source={require('../img/logo/log-out.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-              <Text> Logout</Text>
+              <Text style={{fontWeight:'bold', fontSize:16, color: '#ddd'}}> Logout</Text>
+            </LinearGradient>
+
             </View>
           </TouchableOpacity>
 
@@ -284,6 +348,15 @@ const styles = StyleSheet.create({
     elevation: 15,
     marginTop: 20,
     color: 'grey',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
   },
 
 

@@ -15,10 +15,72 @@ export default function VideoDetail({ route }) {
     // fetch video id from navigation
     const videoId = route.params.videoId;
 
+    //set video parameters
     const [videoData, setVideoData] = useState([]);
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [loading, setLoading] = useState(true);
+
+
+    // belongs to async-storage
+    const [name, setName] = useState('');
+    const [uId, setUId] = useState('');
+    const [username, setUserName] = useState('');
+    const [email, setEmail] = useState('');
+    const [userid, setuserId] = useState('');
+    const [subscriptionId, setSubscriptionId] = useState('');
+    useEffect(() => {
+        getData();
+    }, [])
+
+    // fetch all neccessary information with asynstorage
+    const getData = () => {
+        try {
+            AsyncStorage.getItem('name')
+                .then(value => {
+                    if (value != null) {
+                        setName(value);
+                    } else {
+                        navigation.navigate('Login')
+                    }
+                })
+
+
+            AsyncStorage.getItem('uid')
+                .then(value => {
+                    if (value != null) {
+                        setUId(value);
+                    }
+                })
+
+            AsyncStorage.getItem('username')
+                .then(value => {
+                    if (value != null) {
+                        setUserName(value);
+                    }
+                })
+            AsyncStorage.getItem('email')
+                .then(value => {
+                    if (value != null) {
+                        setEmail(value);
+                    }
+                })
+            AsyncStorage.getItem('subscription_id')
+                .then(value => {
+                    if (value != null) {
+                        setSubscriptionId(value);
+                    }
+                })
+            AsyncStorage.getItem('userid')
+                .then(value => {
+                    if (value != null) {
+                        setuserId(value);
+                    }
+                })
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
 
     // display thumbnail while video is loading
     function MyPosterComponent() {
@@ -45,9 +107,7 @@ export default function VideoDetail({ route }) {
         }
     }
 
-
-
-
+   // fetch video data from server by id
     useEffect(() => {
         async function fetchVideo() {
             try {
@@ -72,39 +132,34 @@ export default function VideoDetail({ route }) {
         fetchVideo();
     }, []);
 
-    
-
-
-
-// COME BACK FOR LOADER IN PLAY BUTTON
     return (
         <ScrollView>
             <View style={styles.videoContainer}>
                 <View style={styles.videoBanner}>
-                    { 
+                    {
                         loading ?
-                        (
                             (
-                                <Image
-                                    source={require('../img/logo/loader0.gif')}
+                                (
+                                    <Image
+                                        source={require('../img/logo/loader0.gif')}
+                                        style={styles.videoImage}
+                                    />
+                                )
+                            ) : (
+                                <Video
                                     style={styles.videoImage}
+                                    ref={video}
+                                    source={{ uri: `${BASE_URL}/${videoData.video}` }}
+                                    usePoster
+                                    posterSource={{ uri: `${BASE_URL}/${videoData.thumbnail}` }}
+                                    posterComponent={MyPosterComponent}
+                                    resizeMode="contain"
+                                    useNativeControls
+                                    isLooping={false}
+                                    onFullscreenUpdate={setOrientation}
+                                    onPlaybackStatusUpdate={status => setStatus(() => status)}
                                 />
                             )
-                        ) : (
-                            <Video
-                                style={styles.videoImage}
-                                ref={video}
-                                source={{ uri: `${BASE_URL}/${videoData.video}` }}
-                                usePoster
-                                posterSource={{ uri: `${BASE_URL}/${videoData.thumbnail}` }}
-                                posterComponent={MyPosterComponent}
-                                resizeMode="contain"
-                                useNativeControls
-                                isLooping={false}
-                                onFullscreenUpdate={setOrientation}
-                                onPlaybackStatusUpdate={status => setStatus(() => status)}
-                            />
-                        )
                     }
 
                     <View style={styles.videoBannerText}>
@@ -119,25 +174,39 @@ export default function VideoDetail({ route }) {
                     <Image source={require("../img/logo/loginlogo.png")} style={{ resizeMode: 'contain', width: 50, height: 40 }} />
                     <Text style={{ color: 'teal', letterSpacing: 4 }}>MOVIEs</Text>
                 </View>
-                <TouchableOpacity onPress={() =>
-                    status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
-                }>
-                    <LinearGradient
-                        // Button Linear Gradient
-                        colors={['#001919', '#004c4c', '#008080']}
-                        style={{
-                            width: '98%', height: 70, alignSelf: 'center', borderRadius: 10, marginTop: 30, justifyContent: 'center', alignItems: 'center', flexDirection: 'row',
-                        }}>
-                        <Image
-                            source={status.isPlaying ?
-                                require("../img/logo/pause.png") :
-                                require("../img/logo/video.png")}
-                            style={{ width: 40, height: 40, tintColor: '#000' }}
-                        />
-                        <Text style={{ fontSize: 20, marginLeft: 10, fontWeight: '600', color: '#000' }}>{status.isPlaying ? "Pause" : "Play"}</Text>
+                {
+                    loading ? (
+                        <View style={[styles.container, styles.horizontal]}>
+                            <ActivityIndicator size="large" />
+                            <ActivityIndicator size="large" />
+                            <ActivityIndicator size="large" color="#0000ff" />
+                            <ActivityIndicator size="large" color="#00ff00" />
+                        </View>
+                    ) :
+                        (
 
-                    </LinearGradient>
-                </TouchableOpacity>
+                            <TouchableOpacity onPress={() =>
+                                status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
+                            }>
+                                <LinearGradient
+                                    // Button Linear Gradient
+                                    colors={['#001919', '#004c4c', '#008080']}
+                                    style={{
+                                        width: '98%', height: 70, alignSelf: 'center', borderRadius: 10, marginTop: 30, justifyContent: 'center', alignItems: 'center', flexDirection: 'row',
+                                    }}>
+                                    <Image
+                                        source={status.isPlaying ?
+                                            require("../img/logo/pause.png") :
+                                            require("../img/logo/video.png")}
+                                        style={{ width: 40, height: 40, tintColor: '#000' }}
+                                    />
+                                    <Text style={{ fontSize: 20, marginLeft: 10, fontWeight: '600', color: '#000' }}>{status.isPlaying ? "Pause" : "Play"}</Text>
+
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        )
+                }
+
 
                 <View>
                     <Text style={{ color: 'khaki', marginTop: 15, marginLeft: 20, fontSize: 30, marginBottom: 30 }}>
@@ -177,7 +246,7 @@ export default function VideoDetail({ route }) {
                         colors={['#4c669f', '#3b5998', '#192f6a']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
-                        style={{ width: 100, height: 55, backgroundColor: 'teal', justifyContent: 'center', paddingTop: 3, paddingBottom: 3 }}
+                        style={{ width: 100, height: 'auto', backgroundColor: 'teal', justifyContent: 'center', paddingTop: 3, paddingBottom: 3 }}
                     >
                         <View>
                             <Text style={{ fontSize: 10, color: '#000', alignSelf: 'center', marginTop: 10 }}>Rating</Text>
@@ -218,7 +287,7 @@ export default function VideoDetail({ route }) {
 
             </View>
 
-        </ScrollView>
+        </ScrollView >
 
 
     )
@@ -234,7 +303,7 @@ const styles = StyleSheet.create({
         paddingTop: 30,
         backgroundColor: '#ecf0f1',
         padding: 8,
-      },
+    },
     videoContainer: {
         flex: 1,
         backgroundColor: '#000'
@@ -254,5 +323,14 @@ const styles = StyleSheet.create({
         right: 20,
         top: 50,
         flexDirection: 'row',
-    }
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    horizontal: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        padding: 10,
+    },
 })

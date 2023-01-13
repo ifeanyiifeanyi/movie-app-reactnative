@@ -37,6 +37,14 @@ const Home = () => {
   const [secondCategory, setSecondCategory] = useState([])
   const [thirdCategory, setThirdCategory] = useState([])
 
+
+  // const [name, setName] = useState('');
+  const [uId, setUId] = useState('');
+  const [username, setUserName] = useState('');
+  const [email, setEmail] = useState('');
+  const [userid, setuserId] = useState('');
+  const [subscriptionId, setSubscriptionId] = useState('');
+
   // check images for banner on reload
   const [index, setIndex] = useState(0)
   useEffect(() => {
@@ -47,40 +55,72 @@ const Home = () => {
     return () => { interval && clearInterval(interval) }
   }, [])
 
-  // use effect function calls
-  useEffect(() => {
-    
-      getCategories();
-      getData();
-      getVideos();
-      getVideosByRating();
-      getVideosByCategory();
-      firstCategorys();
-      secondCategorys();
-      thirdCategorys();
-  }, []);
 
-  // fetch async stored data
+  useEffect(() => {
+    getData();
+  }, [])
+
+  // fetch all neccessary information with asynstorage
   const getData = () => {
     try {
-      AsyncStorage.getItem('username')
+      AsyncStorage.getItem('name')
         .then(value => {
           if (value != null) {
             setName(value);
+          } else {
+            navigation.navigate('Login')
           }
         })
-    } catch (error) {
-      console.log(error)
-      // Alert.alert('Something went wrong. Please try again later', err.message, [
-      //   {
-      //     text: "Try Again",
-      //     onPress: () => DevSettings.reload(),
-      //     style: "cancel"
-      //   }
 
-      // ]);
+
+      AsyncStorage.getItem('uid')
+        .then(value => {
+          if (value != null) {
+            setUId(value);
+          }
+        })
+
+      AsyncStorage.getItem('username')
+        .then(value => {
+          if (value != null) {
+            setUserName(value);
+          }
+        })
+      AsyncStorage.getItem('email')
+        .then(value => {
+          if (value != null) {
+            setEmail(value);
+          }
+        })
+      AsyncStorage.getItem('subscription_id')
+        .then(value => {
+          if (value != null) {
+            setSubscriptionId(value);
+          }
+        })
+      AsyncStorage.getItem('userid')
+        .then(value => {
+          if (value != null) {
+            setuserId(value);
+          }
+        })
+    } catch (err) {
+      console.log(err.message)
     }
   }
+
+  // use effect function calls
+  useEffect(() => {
+    getCategories();
+    getVideos();
+    getVideosByRating();
+    getVideosByCategory();
+    firstCategorys();
+    secondCategorys();
+    thirdCategorys();
+  }, []);
+
+
 
   //  fetch id and thumbnail from api
   const getVideos = async () => {
@@ -126,7 +166,7 @@ const Home = () => {
       console.log(res.data)
     }).catch((err) => {
       console.log(err, "video by rating api error")
-      
+
     })
   }
 
@@ -140,7 +180,7 @@ const Home = () => {
       console.log(response)
     }).catch((err) => {
       console.log("all category Api call error");
-     
+
     });
   }
 
@@ -180,7 +220,7 @@ const Home = () => {
   }
 
 
-  
+
 
   return (
     <SafeAreaView>
