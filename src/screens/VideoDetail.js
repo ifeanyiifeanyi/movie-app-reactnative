@@ -7,6 +7,8 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { LinearGradient } from 'expo-linear-gradient';
+import NetInfo from '@react-native-community/netinfo';
+
 
 
 export default function VideoDetail({ route }) {
@@ -21,6 +23,13 @@ export default function VideoDetail({ route }) {
     const [status, setStatus] = useState({});
     const [loading, setLoading] = useState(true);
 
+    // check if network is available
+    const [isConnected, setIsConnected] = useState(true);
+    useEffect(() => {
+        NetInfo.fetch().then(state => {
+            setIsConnected(state.isConnected)
+        })
+    })
 
     // belongs to async-storage
     const [name, setName] = useState('');
@@ -107,27 +116,36 @@ export default function VideoDetail({ route }) {
         }
     }
 
-   // fetch video data from server by id
+    // fetch video data from server by id
     useEffect(() => {
-        async function fetchVideo() {
-            try {
-                // use video id to fetch video
-                const response = await fetch(`${BASE_URL}/api/video/${videoId}`);
-                const data = await response.json();
-                setVideoData(data[0]);
-            } catch (err) {
-                console.error(err);
-                // Alert.alert('Something went wrong. Please try again later', err.message, [
-                //     {
-                //       text: "Try Again",
-                //       onPress: () => this.fetchVideo,
-                //       style: "cancel"
-                //     }
-
-                // ]);
-            } finally {
+         function fetchVideo() {
+            // if (isConnected) {
+                axios({
+                    // use video id to fetch video
+                    url: `${BASE_URL}/api/video/${videoId}`,
+                    method: "GET"
+                }).then(res => {
+                    setVideoData(res.data[0]);
+                    console.log(res.data)
+                }).catch((err) => {
+                    console.log(err)
+                    Alert.alert('Something went wrong.', "Please try again later", [
+                        {
+                            text: "Try Again",
+                            onPress: () => this.fetchVideo,
+                            style: "cancel"
+                        }
+                    ]);
+                })
                 setLoading(false);
-            }
+
+            // } else {
+            //     Alert.alert('Failed!', 'No internet connection', [{
+            //         text: "Try Again",
+            //         onPress: () => this.fetchVideo,
+            //         style: 'Cancel'
+            //     }])
+            // }
         }
         fetchVideo();
     }, []);
@@ -207,12 +225,18 @@ export default function VideoDetail({ route }) {
                         )
                 }
 
-
                 <View>
-                    <Text style={{ color: 'khaki', marginTop: 15, marginLeft: 20, fontSize: 30, marginBottom: 30 }}>
+                    <Text style={{ color: 'khaki', marginTop: 15, marginLeft: 20, fontSize: 20, marginBottom: 5 }}>
                         {videoData.title ? videoData.title.toUpperCase() : "Loading ..."}
+                        
                     </Text>
                 </View>
+                <View style={{justifyContent:'center', alignItems: 'center'}}>
+                            <Image style={{width:20,height:20}} source={require("../img/logo/eye.png")} />
+                            <Text style={{color:'#ddd'}}>{
+                                videoData.views ? videoData.views: 0} Views
+                            </Text>
+                        </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 7, marginBottom: 17 }}>
                     <Text style={{ color: 'limegreen', marginLeft: 20 }}>Genre: {videoData.genName ? videoData.genName : "Loading ..."}</Text>
                     <Text

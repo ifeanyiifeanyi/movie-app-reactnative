@@ -23,8 +23,7 @@ export default function ConfirmPayment({ props, route }) {
   const { amount } = route.params;
   const { subName } = route.params;
 
-  const [getReference, setGetReference] = useState();
-
+  // set async storage values
   const [name, setName] = useState('');
   const [uId, setUId] = useState('');
   const [username, setUserName] = useState('');

@@ -12,11 +12,11 @@ const Splash = () => {
 
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
+    NetInfo.fetch().then(state => {
       setIsConnected(state.isConnected);
     });
     return () => {
-      console.log("calling network error",unsubscribe());
+      console.log("calling network error");
     };
   }, []);
 
