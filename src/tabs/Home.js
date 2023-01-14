@@ -1,9 +1,10 @@
-import { FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, DevSettings } from 'react-native'
+import { FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, DevSettings, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useNavigation } from '@react-navigation/native'
 import { BASE_URL } from '@env';
 import axios from "axios";
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const IMAGES = [
   require('../img/movies/15.webp'),

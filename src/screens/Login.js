@@ -82,8 +82,8 @@ export default function Login() {
                 console.log("login message ",e.message);
                 Alert.alert('Something went wrong.', "Please try again later", [
                     {
-                      text: "Try Again",
-                      onPress: () => this.userActivePlan,
+                      text: "Ok",
+                      onPress: () => navigation.navigate('Login'),
                       style: "cancel"
                     }
           

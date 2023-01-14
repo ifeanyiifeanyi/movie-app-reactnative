@@ -22,6 +22,9 @@ export default function VideoDetail({ route }) {
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [loading, setLoading] = useState(true);
+    const [likes, setLikes] = useState();
+    const [refresh, setRefresh] = useState(false);
+
 
     // check if network is available
     const [isConnected, setIsConnected] = useState(true);
@@ -91,7 +94,7 @@ export default function VideoDetail({ route }) {
         }
     }
 
-    // display thumbnail while video is loading
+    // display thumbnail , before video is loaded | played
     function MyPosterComponent() {
         const { poster, onLoad, onError } = usePoster(`${BASE_URL}/${videoData.thumbnail}`);
         return (
@@ -118,26 +121,26 @@ export default function VideoDetail({ route }) {
 
     // fetch video data from server by id
     useEffect(() => {
-         function fetchVideo() {
+        function fetchVideo() {
             // if (isConnected) {
-                axios({
-                    // use video id to fetch video
-                    url: `${BASE_URL}/api/video/${videoId}`,
-                    method: "GET"
-                }).then(res => {
-                    setVideoData(res.data[0]);
-                    console.log(res.data)
-                }).catch((err) => {
-                    console.log(err)
-                    Alert.alert('Something went wrong.', "Please try again later", [
-                        {
-                            text: "Try Again",
-                            onPress: () => this.fetchVideo,
-                            style: "cancel"
-                        }
-                    ]);
-                })
-                setLoading(false);
+            axios({
+                // use video id to fetch video
+                url: `${BASE_URL}/api/video/${videoId}`,
+                method: "GET"
+            }).then(res => {
+                setVideoData(res.data[0]);
+                console.log(res.data)
+            }).catch((err) => {
+                console.log(err)
+                Alert.alert('Something went wrong.', "Please try again later", [
+                    {
+                        text: "Try Again",
+                        onPress: () => this.fetchVideo,
+                        style: "cancel"
+                    }
+                ]);
+            })
+            setLoading(false);
 
             // } else {
             //     Alert.alert('Failed!', 'No internet connection', [{
@@ -149,6 +152,41 @@ export default function VideoDetail({ route }) {
         }
         fetchVideo();
     }, []);
+
+
+    useEffect(() => {
+        if(refresh){
+            Alert.alert('Success', 'Thanks for the like!', [
+              {
+                text: 'Ok',
+                onPress: () => setRefresh(false)
+              }
+            ],
+            { cancelable: false }
+          );
+        }
+      }, [refresh]);
+    function likeVideo() {
+        try {
+            axios.post(`${BASE_URL}/api/videolikes/likes`,
+                {
+                    videoId: videoId,
+                    userId: uId
+                }).then(res => {
+                    setLikes(res.data.likes)
+
+                    setRefresh(true)
+                    // navigation.navigate('VideoDetail')
+                    console.log(res.data.likes)
+                }).catch(err => {
+                    console.log(err)
+                });
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+
 
     return (
         <ScrollView>
@@ -228,15 +266,23 @@ export default function VideoDetail({ route }) {
                 <View>
                     <Text style={{ color: 'khaki', marginTop: 15, marginLeft: 20, fontSize: 20, marginBottom: 5 }}>
                         {videoData.title ? videoData.title.toUpperCase() : "Loading ..."}
-                        
+
                     </Text>
                 </View>
-                <View style={{justifyContent:'center', alignItems: 'center'}}>
-                            <Image style={{width:20,height:20}} source={require("../img/logo/eye.png")} />
-                            <Text style={{color:'#ddd'}}>{
-                                videoData.views ? videoData.views: 0} Views
-                            </Text>
-                        </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', marginRight: 20 }}>
+                        <Image style={{ width: 20, height: 20 }} source={require("../img/logo/eye.png")} />
+                        <Text style={{ color: '#ddd' }}>{
+                            videoData.views ? videoData.views : 0} Views
+                        </Text>
+                    </View>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', marginLeft: 10 }}>
+                        <Image style={{ width: 20, height: 20 }} source={require("../img/logo/heart.png")} />
+                        <Text style={{ color: '#ddd' }}>{
+                            videoData.likes ? videoData.likes : likes} Like
+                        </Text>
+                    </View>
+                </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 7, marginBottom: 17 }}>
                     <Text style={{ color: 'limegreen', marginLeft: 20 }}>Genre: {videoData.genName ? videoData.genName : "Loading ..."}</Text>
                     <Text
@@ -297,13 +343,22 @@ export default function VideoDetail({ route }) {
                 <View style={{ flexDirection: 'row', marginTop: 20, justifyContent: 'space-evenly', marginBottom: 35 }}>
 
                     <TouchableOpacity style={{ width: 100, height: 50, justifyContent: 'center', alignItems: 'center', marginLeft: 20 }}>
-                        <Image source={require('../img/logo/share.png')} style={{ tintColor: 'teal' }} />
+                        <Image source={require('../img/logo/share.png')} style={{ width: 40, height: 40 }} />
                         <Text style={{ color: 'teal', marginTop: 5 }}>Share</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ width: 100, height: 50, justifyContent: 'center', alignItems: 'center', marginLeft: 20 }}>
-                        <Image source={require('../img/logo/review.png')} style={{ tintColor: 'teal' }} />
-                        <Text style={{ color: 'teal', marginTop: 5 }}>Like</Text>
-                    </TouchableOpacity>
+
+                    {
+                        videoData.likes && parseInt(videoData.likes) > 0 || parseInt(likes) > 0 ? (
+                            <TouchableOpacity onPress={likeVideo} style={{ width: 100, height: 50, justifyContent: 'center', alignItems: 'center', marginLeft: 20 }}>
+                                <Image source={require('../img/logo/dislike.png')} style={{ width: 40, height: 40 }} />
+                                <Text style={{ color: 'teal', marginTop: 5, fontWeight: 'bold' }}>Dislike</Text>
+                            </TouchableOpacity>
+                        ) : (<TouchableOpacity onPress={likeVideo} style={{ width: 100, height: 50, justifyContent: 'center', alignItems: 'center', marginLeft: 20 }}>
+                            <Image source={require('../img/logo/like.png')} style={{ width: 40, height: 40 }} />
+                            <Text style={{ color: 'teal', marginTop: 5, fontWeight: 'bold' }}>Like</Text>
+                        </TouchableOpacity>)
+                    }
+
                 </View>
 
 
