@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
 import axios from "axios";
 import { LinearGradient } from 'expo-linear-gradient';
+import { initCsrf } from './api';
 
 
 // //
@@ -17,6 +18,7 @@ const SelectUser = ({ navigation, route }) => {
   // for async storage
   const [name, setName] = useState('');
   const [uId, setUId] = useState('');
+  const [token, setToken] = useState('');
   const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [userid, setuserId] = useState('');
@@ -27,6 +29,10 @@ const SelectUser = ({ navigation, route }) => {
 
   // user if active plan if there is?
   const [userPlan, setUserPlan] = useState();
+
+  useEffect(() => {
+    initCsrf();
+}, []);
 
   useEffect(() => {
     userActivePlan();
@@ -44,7 +50,12 @@ const SelectUser = ({ navigation, route }) => {
             navigation.navigate('Login')
           }
         })
-
+ AsyncStorage.getItem('token')
+        .then(value => {
+          if (value != null) {
+            setToken(value);
+          }
+        })
 
       AsyncStorage.getItem('uid')
         .then(value => {
@@ -107,7 +118,10 @@ const SelectUser = ({ navigation, route }) => {
   function userActivePlan() {
     axios({
       url: `${BASE_URL}/api/userActivePlan/${user_id ? user_id : uId}`,
-      method: "GET"
+      method: "GET",
+      header:{
+        'Authorization': 'Bearer ' + token
+      },
     }).then(res => {
       setUserPlan(res.data[0]);
       console.log(res.data)
@@ -143,7 +157,7 @@ const SelectUser = ({ navigation, route }) => {
           <View style={styles.viewVideos}>
             <View>
               {
-                subscriptionId && parseInt(subscriptionId) !== 0 ?
+                parseInt(subscriptionId) > 0 ?
                   (
                     <TouchableOpacity
                       style={styles.viewVideoOne}
@@ -183,7 +197,7 @@ const SelectUser = ({ navigation, route }) => {
 
           <View>
             {
-              subscriptionId && parseInt(subscriptionId) !== 0 ?
+              parseInt(subscriptionId) > 0 ?
                 (
                   <TouchableOpacity onPress={() => { }}>
                     <View style={styles.userDetailSubscribeDone}>

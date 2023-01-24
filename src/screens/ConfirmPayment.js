@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL, PAYSTACK_PUBLIC_KEY } from '@env';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from "axios";
+import { initCsrf } from './api';
 import { Paystack, paystackProps } from 'react-native-paystack-webview';
 
 
@@ -26,6 +27,7 @@ export default function ConfirmPayment({ props, route }) {
   // set async storage values
   const [name, setName] = useState('');
   const [uId, setUId] = useState('');
+  const [token, setToken] = useState('');
   const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [userid, setuserId] = useState('');
@@ -33,6 +35,7 @@ export default function ConfirmPayment({ props, route }) {
 
   useEffect(() => {
     getData();
+    initCsrf();
   }, [])
 
   const getData = () => {
@@ -51,6 +54,12 @@ export default function ConfirmPayment({ props, route }) {
         .then(value => {
           if (value != null) {
             setUId(value);
+          }
+        })
+      AsyncStorage.getItem('token')
+        .then(value => {
+          if (value != null) {
+            setToken(value);
           }
         })
 
@@ -82,6 +91,12 @@ export default function ConfirmPayment({ props, route }) {
       console.log(err.message)
     }
   }
+
+  const options = {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  };
 
 
   return (
@@ -118,7 +133,7 @@ export default function ConfirmPayment({ props, route }) {
               transactionReference: res.data.transactionRef.reference,
               payment_type: "OnlinePayment",
               amount: amount,
-            }).then(async response => {
+            }, options).then(async response => {
               if (response) {
                 console.log(response.data);
                 AsyncStorage.setItem('subscription_id', JSON.stringify(paymentPlanId))
@@ -140,16 +155,16 @@ export default function ConfirmPayment({ props, route }) {
             }).catch(e => {
               console.log("failed transaction:: ", e.message);
               Alert.alert(
-                  'Failed!',
-                  `Error: ${e.message}`,
-                  [
-                    {
-                      text: 'OK',
-                      onPress: () => navigation.navigate('PaymentPlan'),
-                    },
-                  ],
-                  { cancelable: false },
-                );
+                'Failed!',
+                `Error: ${e.message}`,
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => navigation.navigate('PaymentPlan'),
+                  },
+                ],
+                { cancelable: false },
+              );
             })
 
 

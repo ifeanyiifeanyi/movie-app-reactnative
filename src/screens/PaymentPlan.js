@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
+import axios from "axios";
+import { initCsrf } from './api';
+
 import { LinearGradient } from 'expo-linear-gradient';
 
 
@@ -17,12 +20,14 @@ const PaymentPlan = ({ navigation }) => {
   const [name, setName] = useState('');
   const [username, setUserName] = useState('');
   const [uId, setUId] = useState('');
+  const [token, setToken] = useState('');
   const [email, setEmail] = useState('');
   const [userid, setuserId] = useState('');
   const [subscriptionId, setSubscriptionId] = useState('');
 
   useEffect(() => {
     getData();
+    initCsrf();
   }, [])
 
   const getData = () => {
@@ -40,6 +45,12 @@ const PaymentPlan = ({ navigation }) => {
             setName(value);
           }else{
             navigation.navigate('Login')
+          }
+        })
+        AsyncStorage.getItem('token')
+        .then(value => {
+          if (value != null) {
+            setToken(value);
           }
         })
       AsyncStorage.getItem('username')
@@ -75,26 +86,21 @@ const PaymentPlan = ({ navigation }) => {
 
   useEffect(() => {
     async function fetchPaymentPlan() {
-      try {
-        // fetch all payment plans
-        const response = await fetch(`${BASE_URL}/api/paymentPlans`);
-        const data = await response.json();
-        console.log(data);
-        setPlans(data);
-      } catch (err) {
+      axios({
+        url: `${BASE_URL}/api/paymentPlans`,
+        method: "GET",
+        header:{
+          'Authorization': 'Bearer ' + token
+        },
+      }).then(res => {
+        setPlans(res.data);
+
+        console.log(res.data)
+      }).catch((err) => {
+        console.log(err)
         console.error("error from calling plans :: ", err.message);
         setPlanError(err.message)
-        // Alert.alert('Something went wrong. Please try again later', err.message, [
-        //     {
-        //       text: "Try Again",
-        //       onPress: () => this.fetchPaymentPlan,
-        //       style: "cancel"
-        //     }
-
-        // ]);
-      } finally {
-        // setLoading(false);
-      }
+      })
     }
     fetchPaymentPlan();
   }, []);
@@ -110,7 +116,7 @@ const PaymentPlan = ({ navigation }) => {
       <ScrollView>
         <View style={{ padding: 10, backgroundColor: '#000', width: '100%', height: screenHeight }}>
           <Image source={require('../img/logo/loginlogo.png')} style={{ width: 70, height: 90, marginTop: 30 }} />
-          <Text style={{ fontSize: 25, marginTop: 15, alignSelf: 'center', marginBottom: 30, color: '#ddd' }}>Playment Plans {uId}</Text>
+          <Text style={{ fontSize: 25, marginTop: 15, alignSelf: 'center', marginBottom: 30, color: '#ddd' }}>Subscription Plans</Text>
 
           <TouchableOpacity
             onPress={() => navigation.navigate('SelectUser')}

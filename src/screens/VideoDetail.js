@@ -9,6 +9,7 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import { LinearGradient } from 'expo-linear-gradient';
 import NetInfo from '@react-native-community/netinfo';
 
+import { initCsrf } from './api';
 
 
 export default function VideoDetail({ route }) {
@@ -37,12 +38,20 @@ export default function VideoDetail({ route }) {
     // belongs to async-storage
     const [name, setName] = useState('');
     const [uId, setUId] = useState('');
+  const [token, setToken] = useState('');
     const [username, setUserName] = useState('');
     const [email, setEmail] = useState('');
     const [userid, setuserId] = useState('');
     const [subscriptionId, setSubscriptionId] = useState('');
+    const options = {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    };
+    
     useEffect(() => {
         getData();
+    initCsrf();
     }, [])
 
     // fetch all neccessary information with asynstorage
@@ -55,6 +64,12 @@ export default function VideoDetail({ route }) {
                     } else {
                         navigation.navigate('Login')
                     }
+                })
+                AsyncStorage.getItem('token')
+                .then(value => {
+                  if (value != null) {
+                    setToken(value);
+                  }
                 })
 
 
@@ -96,7 +111,7 @@ export default function VideoDetail({ route }) {
 
     // display thumbnail , before video is loaded | played
     function MyPosterComponent() {
-        const { poster, onLoad, onError } = usePoster(`${BASE_URL}/${videoData.thumbnail}`);
+        const { poster, onLoad, onError } = usePoster(`${BASE_URL}/${videoData.thumbnail}`, options);
         return (
             <PosterComponent
                 poster={poster}
@@ -126,16 +141,19 @@ export default function VideoDetail({ route }) {
             axios({
                 // use video id to fetch video
                 url: `${BASE_URL}/api/video/${videoId}`,
-                method: "GET"
+                method: "GET",
+                header:{
+                    'Authorization': 'Bearer ' + token
+                  },
             }).then(res => {
                 setVideoData(res.data[0]);
                 console.log(res.data)
             }).catch((err) => {
                 console.log(err)
-                Alert.alert('Something went wrong.', "Please try again later", [
+                Alert.alert('Something went wrong.',err.message [
                     {
                         text: "Try Again",
-                        onPress: () => this.fetchVideo,
+                        onPress: () => navigation.navigate('HomeScreen'),
                         style: "cancel"
                     }
                 ]);
@@ -172,7 +190,7 @@ export default function VideoDetail({ route }) {
                 {
                     videoId: videoId,
                     userId: uId
-                }).then(res => {
+                }, options).then(res => {
                     setLikes(res.data.likes)
 
                     setRefresh(true)

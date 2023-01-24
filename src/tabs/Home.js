@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar'
 import { useNavigation } from '@react-navigation/native'
 import { BASE_URL } from '@env';
 import axios from "axios";
+import { initCsrf } from '../screens/api';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const IMAGES = [
@@ -21,12 +22,6 @@ const IMAGES = [
 const Home = () => {
   const navigation = useNavigation();
 
-
-
-  //bapitsm
-  //first holy
-  //catism
-  //other categories
   const [list, setList] = useState([]);
   const [name, setName] = useState('');
 
@@ -41,10 +36,17 @@ const Home = () => {
 
   // const [name, setName] = useState('');
   const [uId, setUId] = useState('');
+  const [token, setToken] = useState('');
   const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [userid, setuserId] = useState('');
   const [subscriptionId, setSubscriptionId] = useState('');
+
+  const options = {
+    headers: {
+        'Authorization': `Bearer ${token}`,
+    },
+};
 
   // check images for banner on reload
   const [index, setIndex] = useState(0)
@@ -59,6 +61,7 @@ const Home = () => {
 
   useEffect(() => {
     getData();
+    initCsrf();
   }, [])
 
   // fetch all neccessary information with asynstorage
@@ -72,7 +75,12 @@ const Home = () => {
             navigation.navigate('Login')
           }
         })
-
+        AsyncStorage.getItem('token')
+        .then(value => {
+          if (value != null) {
+            setToken(value);
+          }
+        })
 
       AsyncStorage.getItem('uid')
         .then(value => {
@@ -128,7 +136,10 @@ const Home = () => {
 
     axios({
       url: `${BASE_URL}/api/allvideo`,
-      method: "GET"
+      method: "GET",
+      header:{
+        'Authorization': 'Bearer ' + token
+      },
     }).then(res => {
       SetVideoList(res.data);
       console.log(res.data)
@@ -148,7 +159,10 @@ const Home = () => {
   const getVideosByCategory = async () => {
     axios({
       url: `${BASE_URL}/api/allvideobycategory`,
-      method: "GET"
+      method: "GET",
+      header:{
+        'Authorization': 'Bearer ' + token
+      },
     }).then(res => {
       SetVideoListByCategory(res.data);
       console.log(res.data)
@@ -161,7 +175,10 @@ const Home = () => {
   const getVideosByRating = async () => {
     axios({
       url: `${BASE_URL}/api/allvideobyrating`,
-      method: "GET"
+      method: "GET",
+      header:{
+        'Authorization': 'Bearer ' + token
+      },
     }).then(res => {
       SetVideoListByRating(res.data);
       console.log(res.data)
@@ -175,12 +192,15 @@ const Home = () => {
   const getCategories = async () => {
     axios({
       url: `${BASE_URL}/api/categories`,
-      method: "GET"
+      method: "GET",
+      header:{
+        'Authorization': 'Bearer ' + token
+      },
     }).then(res => {
       setList(res.data);
       console.log(response)
     }).catch((err) => {
-      console.log("all category Api call error");
+      console.log("category ::",err);
 
     });
   }
@@ -189,7 +209,10 @@ const Home = () => {
   const firstCategorys = async () => {
     axios({
       url: `${BASE_URL}/api/firstCategory`,
-      method: "GET"
+      method: "GET",
+      header:{
+        'Authorization': 'Bearer ' + token
+      },
     }).then(res => {
       setFirstCategory(res.data);
     }).catch((err) => {
@@ -200,7 +223,10 @@ const Home = () => {
   const secondCategorys = async () => {
     axios({
       url: `${BASE_URL}/api/secondCategory`,
-      method: "GET"
+      method: "GET",
+      header:{
+        'Authorization': 'Bearer ' + token
+      },
     }).then(res => {
       setSecondCategory(res.data);
     }).catch((err) => {
@@ -211,7 +237,10 @@ const Home = () => {
   const thirdCategorys = async () => {
     axios({
       url: `${BASE_URL}/api/thirdCategory`,
-      method: "GET"
+      method: "GET",
+      header:{
+        'Authorization': 'Bearer ' + token
+      },
     }).then(res => {
       setThirdCategory(res.data);
       // console.log(response)
@@ -375,8 +404,8 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     color: 'gold',
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontWeight: '900',
+    fontSize: 13,
   },
   topViewBottomView: {
     position: 'absolute',

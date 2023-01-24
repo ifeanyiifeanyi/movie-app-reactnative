@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Image, TextInput,  TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from "react-native";
 import axios from "axios";
 import { BASE_URL } from '@env';
 import * as Device from 'expo-device'
@@ -19,7 +19,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   // error messages
-  const [errorMessage, setError] = useState({errorName: "",errorUsername: "",errorEmail: "",errorPassword: ""});
+  const [errorMessage, setError] = useState({ errorName: "", errorUsername: "", errorEmail: "", errorPassword: "" });
 
   // success message
   const [success, setSuccess] = useState("");
@@ -31,7 +31,7 @@ export default function Register() {
     } else if (password.trim() !== confirmPassword.trim()) {
       Alert.alert("Passwords do not match!")
       return;
-    }else {
+    } else {
       axios.post(`${BASE_URL}/api/register`, {
         name: name,
         username: username,
@@ -54,10 +54,16 @@ export default function Register() {
           setEmail("");
           setPassword("");
           setConfirmPassword("");
-          setTimeout(() => {
-            // redirect after registration
-            navigation.navigate('Login', )
-          }, 4000);
+
+          Alert.alert('Registration Successful', 'Please check your email for verification link', [
+            {
+              text: 'Ok',
+              onPress: () => navigation.navigate('Login',)
+            }
+          ],
+            { cancelable: false }
+          );
+
         } else {
           // if error: set error messages
           setError({
@@ -157,9 +163,9 @@ export default function Register() {
       <TouchableOpacity onPress={() => { navigation.navigate("Login") }}>
         <Text style={styles.forgot_button}>A Member? <Text style={{ color: 'teal' }}>Sign In</Text></Text>
       </TouchableOpacity>
-      
+
       <TouchableOpacity onPress={() => register(name, username, email, password)} style={styles.loginBtn}>
-          <Text style={{ color: '#ddd', fontSize: 18 }}>SIGN UP</Text>
+        <Text style={{ color: '#ddd', fontSize: 18 }}>SIGN UP</Text>
       </TouchableOpacity>
     </View>
   );
@@ -177,7 +183,7 @@ const styles = StyleSheet.create({
     width: 130,
     height: 158,
     marginBottom: 40,
-    objectFit:'contain',
+    objectFit: 'contain',
     marginTop: 10,
   },
 

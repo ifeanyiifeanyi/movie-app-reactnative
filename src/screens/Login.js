@@ -32,7 +32,7 @@ export default function Login() {
             }).then(async response => {
                 // if login data return true 
                 if (response.data.status) {
-                    console.log(response)
+                    console.log(response.data)
 
                     // set empty error msgs if login success 
                     setError({
@@ -46,6 +46,7 @@ export default function Login() {
                     setPassword("");
                     try {
                         await AsyncStorage.setItem('uid', JSON.stringify(response.data.username.id));
+                        await AsyncStorage.setItem('token', JSON.stringify(response.data.token));
                         await AsyncStorage.setItem('username', response.data.username.name);
                         await AsyncStorage.setItem('name', response.data.username.username);
                         await AsyncStorage.setItem('email', response.data.username.email);
