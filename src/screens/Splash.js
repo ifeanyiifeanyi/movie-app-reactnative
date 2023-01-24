@@ -39,7 +39,7 @@ const Splash = () => {
 
   return (
     <View style={myStyle.container}>
-      <Image source={require('../img/gif/loading.gif')} style={{width:200,height:200}} />
+      <Image source={require('../img/logo/loading1.gif')} style={{width:200,height:200}} />
     </View>
   )
 }

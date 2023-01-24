@@ -80,7 +80,7 @@ export default function Register() {
   return (
 
     <View style={styles.container}>
-      <Image style={styles.image} source={require("../img/logo/loginlogo.png")} />
+      <Image style={styles.image}  source={require("../img/logo/loginlogo.png")} />
 
       <StatusBar style="auto" />
 
@@ -180,8 +180,8 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: 130,
-    height: 158,
+    width: 100,
+    height: 130,
     marginBottom: 40,
     objectFit: 'contain',
     marginTop: 10,
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: "teal",
     borderRadius: 10,
     width: "90%",
-    height: 45,
+    height: 60,
     marginBottom: 20,
     marginLeft: 16,
   },

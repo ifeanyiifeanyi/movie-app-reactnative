@@ -14,6 +14,7 @@ import VideoDetail from './src/screens/VideoDetail'
 import VerifyEmail from './src/screens/VerifyEmail'
 import PaymentPlan from './src/screens/PaymentPlan'
 import ConfirmPayment from './src/screens/ConfirmPayment'
+import EditProfile from './src/screens/EditProfile'
 
 const Stack = createStackNavigator();
 
@@ -70,6 +71,11 @@ const App = () => {
                 <Stack.Screen 
                     name='ConfirmPayment' 
                     component={ConfirmPayment} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='EditProfile' 
+                    component={EditProfile} 
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

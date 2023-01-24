@@ -38,7 +38,7 @@ export default function VideoDetail({ route }) {
     // belongs to async-storage
     const [name, setName] = useState('');
     const [uId, setUId] = useState('');
-  const [token, setToken] = useState('');
+    const [token, setToken] = useState('');
     const [username, setUserName] = useState('');
     const [email, setEmail] = useState('');
     const [userid, setuserId] = useState('');
@@ -48,10 +48,10 @@ export default function VideoDetail({ route }) {
             'Authorization': `Bearer ${token}`,
         },
     };
-    
+
     useEffect(() => {
         getData();
-    initCsrf();
+        initCsrf();
     }, [])
 
     // fetch all neccessary information with asynstorage
@@ -65,11 +65,11 @@ export default function VideoDetail({ route }) {
                         navigation.navigate('Login')
                     }
                 })
-                AsyncStorage.getItem('token')
+            AsyncStorage.getItem('token')
                 .then(value => {
-                  if (value != null) {
-                    setToken(value);
-                  }
+                    if (value != null) {
+                        setToken(value);
+                    }
                 })
 
 
@@ -142,15 +142,15 @@ export default function VideoDetail({ route }) {
                 // use video id to fetch video
                 url: `${BASE_URL}/api/video/${videoId}`,
                 method: "GET",
-                header:{
+                header: {
                     'Authorization': 'Bearer ' + token
-                  },
+                },
             }).then(res => {
                 setVideoData(res.data[0]);
                 console.log(res.data)
             }).catch((err) => {
                 console.log(err)
-                Alert.alert('Something went wrong.',err.message [
+                Alert.alert('Something went wrong.', err.message[
                     {
                         text: "Try Again",
                         onPress: () => navigation.navigate('HomeScreen'),
@@ -173,17 +173,17 @@ export default function VideoDetail({ route }) {
 
 
     useEffect(() => {
-        if(refresh){
+        if (refresh) {
             Alert.alert('Success', 'Thanks for the like!', [
-              {
-                text: 'Ok',
-                onPress: () => setRefresh(false)
-              }
+                {
+                    text: 'Ok',
+                    onPress: () => setRefresh(false)
+                }
             ],
-            { cancelable: false }
-          );
+                { cancelable: false }
+            );
         }
-      }, [refresh]);
+    }, [refresh]);
     function likeVideo() {
         try {
             axios.post(`${BASE_URL}/api/videolikes/likes`,

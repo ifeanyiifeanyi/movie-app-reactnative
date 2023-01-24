@@ -176,7 +176,7 @@ const SelectUser = ({ navigation, route }) => {
               }
             </View>
             <View>
-              <TouchableOpacity style={styles.viewVideoTwo} onPress={() => { "" }}>
+              <TouchableOpacity style={styles.viewVideoTwo} onPress={() => { navigation.navigate('EditProfile') }}>
                 <Image source={require('../img/logo/users.png')} style={{ width: 20, height: 20 }} />
                 <Text style={{color: '#ddd'}}> Edit Profile</Text>
               </TouchableOpacity>

@@ -42,11 +42,13 @@ const Home = () => {
   const [userid, setuserId] = useState('');
   const [subscriptionId, setSubscriptionId] = useState('');
 
+  const [loading, setLoading] = useState(false);
+
   const options = {
     headers: {
-        'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`,
     },
-};
+  };
 
   // check images for banner on reload
   const [index, setIndex] = useState(0)
@@ -75,7 +77,7 @@ const Home = () => {
             navigation.navigate('Login')
           }
         })
-        AsyncStorage.getItem('token')
+      AsyncStorage.getItem('token')
         .then(value => {
           if (value != null) {
             setToken(value);
@@ -133,18 +135,21 @@ const Home = () => {
 
   //  fetch id and thumbnail from api
   const getVideos = async () => {
-
+    setLoading(true)
     axios({
       url: `${BASE_URL}/api/allvideo`,
       method: "GET",
-      header:{
+      header: {
         'Authorization': 'Bearer ' + token
       },
     }).then(res => {
+      setLoading(false);
       SetVideoList(res.data);
       console.log(res.data)
     }).catch((err) => {
       console.log(err)
+
+      setLoading(true)
       // Alert.alert('Something went wrong. Please try again later', err.message, [
       //   {
       //     text: "Try Again",
@@ -160,7 +165,7 @@ const Home = () => {
     axios({
       url: `${BASE_URL}/api/allvideobycategory`,
       method: "GET",
-      header:{
+      header: {
         'Authorization': 'Bearer ' + token
       },
     }).then(res => {
@@ -176,7 +181,7 @@ const Home = () => {
     axios({
       url: `${BASE_URL}/api/allvideobyrating`,
       method: "GET",
-      header:{
+      header: {
         'Authorization': 'Bearer ' + token
       },
     }).then(res => {
@@ -193,14 +198,14 @@ const Home = () => {
     axios({
       url: `${BASE_URL}/api/categories`,
       method: "GET",
-      header:{
+      header: {
         'Authorization': 'Bearer ' + token
       },
     }).then(res => {
       setList(res.data);
       console.log(response)
     }).catch((err) => {
-      console.log("category ::",err);
+      console.log("category ::", err);
 
     });
   }
@@ -210,7 +215,7 @@ const Home = () => {
     axios({
       url: `${BASE_URL}/api/firstCategory`,
       method: "GET",
-      header:{
+      header: {
         'Authorization': 'Bearer ' + token
       },
     }).then(res => {
@@ -224,7 +229,7 @@ const Home = () => {
     axios({
       url: `${BASE_URL}/api/secondCategory`,
       method: "GET",
-      header:{
+      header: {
         'Authorization': 'Bearer ' + token
       },
     }).then(res => {
@@ -238,7 +243,7 @@ const Home = () => {
     axios({
       url: `${BASE_URL}/api/thirdCategory`,
       method: "GET",
-      header:{
+      header: {
         'Authorization': 'Bearer ' + token
       },
     }).then(res => {
@@ -281,65 +286,75 @@ const Home = () => {
             </View>
           </View>
 
-          <View style={styles.secondView}>
-            <View style={{ marginTop: 190 }}>
-              <Text style={[styles.customTitle, { marginTop: 20 }]}>{thirdCategory.name ? thirdCategory.name : "Loading ..."}</Text>
-              <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoList} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
-                return (
-                  <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
+          {
+            loading ? (
+              (
+                <View style={[styles.secondView, {marginTop:500, alignSelf:'center'}]}>
+                <Image source={require('../img/logo/loading1.gif')} style={{width:350,height:350}} />
+                  
+                </View>)
+            ) : (
+              <View style={styles.secondView}>
+                <View style={{ marginTop: 190 }}>
+                  <Text style={[styles.customTitle, { marginTop: 20 }]}>{thirdCategory.name ? thirdCategory.name : "Loading ..."}</Text>
+                  <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoList} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
+                    return (
+                      <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
 
-                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={{ width: 150, height: 170, borderRadius: 10 }} />
-
-
-                    <View style={styles.nextWatchView}>
-
-                      <Text style={{ color: 'gold', textTransform: 'capitalize', fontWeight: 'slim', fontSize: 15, }}>{item.title}</Text>
-                      <Image source={require('../img/logo/option.png')} style={{ width: 15, height: 15, tintColor: 'teal', marginRight: 10 }} />
-
-                    </View>
-
-                    <View style={styles.nextWatchViewPlayImage}>
-                      <Image source={require('../img/logo/video.png')} style={{ width: 70, height: 70, tintColor: 'khaki' }} />
-                    </View>
-                  </TouchableOpacity>
-                )
-              }} />
-            </View>
+                        <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={{ width: 150, height: 170, borderRadius: 10 }} />
 
 
+                        <View style={styles.nextWatchView}>
 
+                          <Text style={{ color: 'gold', textTransform: 'capitalize', fontWeight: 'slim', fontSize: 15, }}>{item.title}</Text>
+                          <Image source={require('../img/logo/option.png')} style={{ width: 15, height: 15, tintColor: 'teal', marginRight: 10 }} />
 
-            <View style={{ marginTop: 10 }}>
-              <Text style={styles.customTitle}>{secondCategory.name ? secondCategory.name : "Loading ..."}</Text>
+                        </View>
 
-              <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByRating} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
-                return (
-                  <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
-                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
-                    <View style={styles.videoLabel}>
-                      <Text style={styles.videoLabelText}>{item.rateName}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )
-              }} />
-            </View>
+                        <View style={styles.nextWatchViewPlayImage}>
+                          <Image source={require('../img/logo/video.png')} style={{ width: 70, height: 70, tintColor: 'khaki' }} />
+                        </View>
+                      </TouchableOpacity>
+                    )
+                  }} />
+                </View>
 
 
 
-            <View style={{ marginTop: 5, marginBottom: 100 }}>
-              <Text style={styles.customTitle}>{firstCategory.name ? firstCategory.name : "Loading ..."}</Text>
-              <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByCategory} horizontal renderItem={({ item, image }) => {
-                return (
-                  <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
-                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
-                    <View style={styles.videoLabel}>
-                      <Text style={styles.videoLabelText}>{item.catName}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )
-              }} />
-            </View>
-          </View>
+
+                <View style={{ marginTop: 10 }}>
+                  <Text style={styles.customTitle}>{secondCategory.name ? secondCategory.name : "Loading ..."}</Text>
+
+                  <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByRating} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
+                    return (
+                      <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
+                        <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
+                        <View style={styles.videoLabel}>
+                          <Text style={styles.videoLabelText}>{item.rateName}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    )
+                  }} />
+                </View>
+                <View style={{ marginTop: 5, marginBottom: 100 }}>
+                  <Text style={styles.customTitle}>{firstCategory.name ? firstCategory.name : "Loading ..."}</Text>
+                  <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByCategory} horizontal renderItem={({ item, image }) => {
+                    return (
+                      <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
+                        <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
+                        <View style={styles.videoLabel}>
+                          <Text style={styles.videoLabelText}>{item.catName}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    )
+                  }} />
+                </View>
+              </View>
+            )
+          }
+
+
+
         </View>
       </ScrollView>
     </SafeAreaView>
