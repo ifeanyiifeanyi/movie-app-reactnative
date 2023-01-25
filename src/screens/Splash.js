@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { black } from '../utils/Colors'
 import { useNavigation } from '@react-navigation/native'
 import NetInfo from '@react-native-community/netinfo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Splash = () => {
 
@@ -22,11 +24,10 @@ const Splash = () => {
 
   useEffect(() => {
     setTimeout(() => {
-
       if (isConnected) {
-        navigation.navigate('Login');
+        handleGetToken();
       } else {
-        Alert.alert("Connection Failed!",[
+        Alert.alert("Connection Failed!", [
           {
             text: "Try Again",
             onPress: () => DevSettings.reload(),
@@ -36,10 +37,18 @@ const Splash = () => {
       }
     }, 2000);
   }, [])
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('token');
+    if (!dataToken) {
+      navigation.navigate('Login');
+    } else {
+      navigation.navigate('SelectUser');
+    }
+  }
 
   return (
     <View style={myStyle.container}>
-      <Image source={require('../img/logo/loading1.gif')} style={{width:200,height:200}} />
+      <Image source={require('../img/logo/loading1.gif')} style={{ width: 200, height: 200 }} />
     </View>
   )
 }
@@ -47,7 +56,7 @@ const Splash = () => {
 export default Splash
 const myStyle = StyleSheet.create({
   container: {
-    flex:1,
+    flex: 1,
     backgroundColor: black,
     justifyContent: 'center',
     alignItems: 'center',

@@ -10,10 +10,12 @@ import * as Device from 'expo-device';
 export default function Login() {
     const navigation = useNavigation();
 
+    const [showPassword, setShowPassword] = useState(false)
+
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const [errorMessage, setError] = useState({errorName: ""});
+    const [errorMessage, setError] = useState({ errorName: "" });
     const [success, setSuccess] = useState("");
 
 
@@ -21,12 +23,12 @@ export default function Login() {
 
     const login = async (username, password) => {
         if (!username.trim() || !password.trim()) {
-            Alert.alert("warning","Please enter all required fields!");
+            Alert.alert("warning", "Please enter all required fields!");
             return;
-        } else if(password.trim().length < 8){
-            Alert.alert("warning","Password must not be less than 8 characters!");
+        } else if (password.trim().length < 8) {
+            Alert.alert("warning", "Password must not be less than 8 characters!");
             return;
-        }else {
+        } else {
             //make api request with form data 
             axios.post(`${BASE_URL}/api/login`, {
                 username: username,
@@ -62,13 +64,13 @@ export default function Login() {
                     }
 
                     // if user account has not been verified !
-                    if(response.data.username.status === 1){
+                    if (response.data.username.status === 1) {
                         //timer before redirect if login success 
                         setTimeout(() => {
-                            navigation.navigate('SelectUser', {user_id: response.data.username.id});
+                            navigation.navigate('SelectUser', { user_id: response.data.username.id });
                             setSuccess("");
                         }, 4000);
-                    }else{
+                    } else {
                         // redirect to verify if account has not verify
                         setTimeout(() => {
                             navigation.navigate('VerifyEmail');
@@ -83,14 +85,14 @@ export default function Login() {
                     });
                 }
             }).catch(e => {
-                console.log("login message ",e.message);
+                console.log("login message ", e.message);
                 Alert.alert('Something went wrong.', "Please try again later", [
                     {
-                      text: "Ok",
-                      onPress: () => navigation.navigate('Login'),
-                      style: "cancel"
+                        text: "Ok",
+                        onPress: () => navigation.navigate('Login'),
+                        style: "cancel"
                     }
-          
+
                 ]);
             })
         }
@@ -110,26 +112,29 @@ export default function Login() {
             {success && (<Text style={{ color: 'limegreen', marginBottom: 20 }}>{success}</Text>)}
             <View style={styles.inputView}>
                 <TextInput
-                    style={styles.TextInput} 
-                    placeholder="Enter username"
+                    style={styles.TextInput}
+                    placeholder="Enter Username | Email"
                     placeholderTextColor="#003f5c"
                     value={username}
                     onChangeText={(username) => setUsername(username)}
                 />
             </View>
-           
+
             {/*password input text */}
-            <View style={styles.inputView}>
+            <View style={[styles.inputView, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
                 <TextInput
                     style={styles.TextInput}
                     placeholder="Password."
                     placeholderTextColor="#003f5c"
-                    secureTextEntry={true}
+                    secureTextEntry={!showPassword}
                     value={password}
                     onChangeText={(password) => setPassword(password)}
                 />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                    <Image source={!showPassword ? require('../img/logo/eye.png') : require('../img/logo/close-eyes.png')} style={{ width: 30, height: 30, marginRight: 20 }} />
+                </TouchableOpacity>
             </View>
-           
+
             {/* link to forgot password page */}
             <TouchableOpacity onPress={() => { navigation.navigate("RecoverPassword") }}>
                 <Text style={styles.forgot_button}>Forgot Password?</Text>
@@ -160,7 +165,7 @@ const styles = StyleSheet.create({
         width: 130,
         height: 158,
         marginBottom: 40,
-        objectFit:'contain',
+        objectFit: 'contain',
         marginTop: 10,
     },
 

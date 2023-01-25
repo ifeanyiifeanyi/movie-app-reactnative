@@ -12,6 +12,8 @@ export default function Register() {
 
   const navigation = useNavigation();
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -133,15 +135,18 @@ export default function Register() {
         </Text>
       )}
 
-      <View style={styles.inputView}>
+      <View style={[styles.inputView,  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
         <TextInput
           style={styles.TextInput}
           placeholder="Enter Password."
           placeholderTextColor="#003f5c"
           value={password}
-          secureTextEntry={true}
+          secureTextEntry={!showPassword}
           onChangeText={(password) => setPassword(password)}
         />
+         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                    <Image source={!showPassword ? require('../img/logo/eye.png') : require('../img/logo/close-eyes.png')} style={{ width: 30, height: 30, marginRight: 20 }} />
+                </TouchableOpacity>
       </View>
       {errorMessage.errorPassword && (
         <Text style={{ color: 'crimson', fontSize: 10, marginBottom: 5 }}>
