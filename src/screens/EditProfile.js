@@ -36,7 +36,7 @@ export default function EditProfile() {
 
 
     // error messages
-    const [errorMessage, setError] = useState({ errorName: "", errorUsername: "", errorEmail: "" });
+    const [error, setError] = useState('');
 
     useEffect(() => {
         getData();
@@ -95,13 +95,58 @@ export default function EditProfile() {
             console.log(err.message)
         }
     }
+
+    const upDateProfile = (nameSubmit, usernameSubmit, emailSubmit) => {
+        if(!nameSubmit.trim() || !usernameSubmit.trim() || !emailSubmit.trim()){
+            Alert.alert('Required!', 'All fields are required!', [
+                {
+                  text: 'OK',
+                  onPress: () => this,
+                },
+              ],
+              { cancelable: true },
+            );
+        }else{
+            axios.post(`${BASE_URL}/api/updateProfile`, {
+                uId: uId,
+                name: nameSubmit,
+                username: usernameSubmit,
+                email: emailSubmit,
+                devicename: Device.modelName
+            }).then(async response => {
+                if(response.data.status){
+                    AsyncStorage.setItem('name', JSON.stringify(nameSubmit))
+                  .then(() => console.log('name updated!'))
+                  .catch(error => console.error(error));
+                  AsyncStorage.setItem('email', JSON.stringify(emailSubmit))
+                  .then(() => console.log('email updated!'))
+                  .catch(error => console.error(error));
+                  AsyncStorage.setItem('username', JSON.stringify(usernameSubmit))
+                  .then(() => console.log('username updated!'))
+                  .catch(error => console.error(error));
+
+                    Alert.alert('Successful!', 'Profile Updated successfully!', [
+                        {
+                          text: 'OK',
+                          onPress: () => navigation.navigate('SelectUser'),
+                        },
+                      ],
+                      { cancelable: false },
+                    );
+                }else{
+                    setError(response.data.message);
+                }
+            })
+        }
+    }
     return (
         <View style={styles.container}>
-            <Text>Edit Profile </Text>
+            <Text style={{ fontSize:25, marginBottom:25}}>Edit Profile </Text>
 
             <StatusBar style="auto" />
 
             {success && (<Text style={{ color: 'limegreen', marginBottom: 20 }}>{success}</Text>)}
+            {error && (<Text style={{ color: 'crimson', marginBottom: 20, fontWeight:'bold' }}>{error}</Text>)}
 
             <View style={styles.inputView}>
                 <TextInput
@@ -111,13 +156,7 @@ export default function EditProfile() {
                     onChangeText={(nameSubmit) => setNameSubmit(nameSubmit)}
                 />
             </View>
-            {errorMessage.errorName && (
-                <Text style={{ color: 'crimson', fontSize: 10, marginBottom: 5 }}>
-                    {errorMessage.errorName}
-                </Text>
-            )}
-
-
+           
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.TextInput}
@@ -126,13 +165,7 @@ export default function EditProfile() {
                     onChangeText={(usernameSubmit) => setUsernameSubmit(usernameSubmit)}
                 />
             </View>
-            {errorMessage.errorUsername && (
-                <Text style={{ color: 'crimson', fontSize: 10, marginBottom: 5 }}>
-                    {errorMessage.errorUsername}
-                </Text>
-            )}
-
-
+            
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.TextInput}
@@ -141,13 +174,8 @@ export default function EditProfile() {
                     onChangeText={(emailSubmit) => setEmail(emailSubmit)}
                 />
             </View>
-            {errorMessage.errorEmail && (
-                <Text style={{ color: 'crimson', fontSize: 10, marginBottom: 15, width: '85%' }}>
-                    {errorMessage.errorEmail}
-                </Text>
-            )}
 
-            <TouchableOpacity onPress={() => register(name, username, email, password)} style={styles.loginBtn}>
+            <TouchableOpacity onPress={() => upDateProfile(name, username, email)} style={styles.loginBtn}>
                 <Text style={{ color: '#ddd', fontSize: 18 }}>UPDATE</Text>
             </TouchableOpacity>
         </View>

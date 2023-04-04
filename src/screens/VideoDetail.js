@@ -9,7 +9,6 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import { LinearGradient } from 'expo-linear-gradient';
 import NetInfo from '@react-native-community/netinfo';
 
-import { initCsrf } from './api';
 
 
 export default function VideoDetail({ route }) {
@@ -51,7 +50,6 @@ export default function VideoDetail({ route }) {
 
     useEffect(() => {
         getData();
-        initCsrf();
     }, [])
 
     // fetch all neccessary information with asynstorage
@@ -345,12 +343,12 @@ export default function VideoDetail({ route }) {
                     <Text style={{ fontSize: 16, fontWeight: '800', color: 'teal', marginLeft: 10, marginTop: 8 }}># {videoData.catName ? videoData.catName : "Loading"}</Text>
 
                 </View>
-                {/* <TouchableOpacity style={{
+                <TouchableOpacity style={{
                     width: '98%', height: 50, backgroundColor: '#05D6D9', alignSelf: 'center', borderRadius: 10, marginTop: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'
                 }}>
                     <Image source={require("../img/logo/download1.png")} style={{ width: 24, height: 24, tintColor: '#ddd' }} />
                     <Text style={{ fontSize: 18, marginLeft: 10, fontWeight: '600', color: 'ddd' }}>Download</Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
 
                 <Text style={{
                     color: '#d4d4d4', lineHeight: 20, textAlign: 'justify', margin: 20, fontSize: 15, alignSelf: 'center', width: '90%'

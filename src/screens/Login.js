@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert, RefreshControl } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
 import axios from "axios";
@@ -18,6 +18,14 @@ export default function Login() {
     const [errorMessage, setError] = useState({ errorName: "" });
     const [success, setSuccess] = useState("");
 
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
+    }, []);
 
 
 
@@ -29,11 +37,12 @@ export default function Login() {
             Alert.alert("warning", "Password must not be less than 8 characters!");
             return;
         } else {
-            //make api request with form data 
+ 
             axios.post(`${BASE_URL}/api/login`, {
                 username: username,
                 password: password,
                 devicename: Device.modelName
+
             }).then(async response => {
                 // if login data return true 
                 if (response.data.status) {
@@ -51,7 +60,7 @@ export default function Login() {
                     setPassword("");
                     try {
                         await AsyncStorage.setItem('uid', JSON.stringify(response.data.username.id));
-                        await AsyncStorage.setItem('token', JSON.stringify(response.data.token));
+                        // await AsyncStorage.setItem('token', JSON.stringify(response.data.token));
                         await AsyncStorage.setItem('username', response.data.username.name);
                         await AsyncStorage.setItem('name', response.data.username.username);
                         await AsyncStorage.setItem('email', response.data.username.email);
@@ -64,7 +73,7 @@ export default function Login() {
                     }
 
                     // if user account has not been verified !
-                    if (response.data.username.status === 1) {
+                    if (response.data.username.status == 1) {
                         //timer before redirect if login success 
                         setTimeout(() => {
                             navigation.navigate('SelectUser', { user_id: response.data.username.id });
@@ -78,7 +87,7 @@ export default function Login() {
                         }, 4000);
                     }
                 } else {
-                    console.log(response.data.message)
+                    console.log(response.message)
                     // set api error msg 
                     setError({
                         errorName: response.data.message ? response.data.message : "",
@@ -97,6 +106,7 @@ export default function Login() {
             })
         }
     }
+
     return (
 
         <View style={styles.container}>
@@ -110,6 +120,8 @@ export default function Login() {
             )}
 
             {success && (<Text style={{ color: 'limegreen', marginBottom: 20 }}>{success}</Text>)}
+         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.TextInput}

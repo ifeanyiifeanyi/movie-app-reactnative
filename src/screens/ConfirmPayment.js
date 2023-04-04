@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL, PAYSTACK_PUBLIC_KEY } from '@env';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from "axios";
-import { initCsrf } from './api';
 import { Paystack, paystackProps } from 'react-native-paystack-webview';
 
 
@@ -35,7 +34,7 @@ export default function ConfirmPayment({ props, route }) {
 
   useEffect(() => {
     getData();
-    initCsrf();
+
   }, [])
 
   const getData = () => {
@@ -173,7 +172,7 @@ export default function ConfirmPayment({ props, route }) {
         />
         <TouchableOpacity onPress={() => navigation.navigate("SelectUser")} style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
           <Image source={require('../img/logo/avatar.png')} style={{ width: 50, height: 50 }} />
-          <Text>Profile</Text>
+          <Text>Back To Profile</Text>
         </TouchableOpacity>
         <View style={styles.paymentDetails}>
           <ImageBackground source={require('../img/logo/blackwood.jpg')} style={{ resizeMode: 'cover', paddingLeft: 20, }}>
@@ -189,30 +188,40 @@ export default function ConfirmPayment({ props, route }) {
         </View>
         <TouchableOpacity onPress={() => paystackWebViewRef.current.startTransaction()}>
           <LinearGradient
+
             // Button Linear Gradient
-            colors={['#7F00FF', '#D8BFD8', '#BDB5D5']}
+            colors={['#4169E1', '#1E90FF', '#000080']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.btn}
           >
             <Text style={{ alignSelf: 'center', fontWeight: 'bold', color: '#ddd', fontSize: 15 }}>
-              Pay Now
+              Subscribe Now
             </Text>
           </LinearGradient>
         </TouchableOpacity>
         <Text style={styles.oR}>OR</Text>
         <View style={styles.lineThrough} />
 
-        <TouchableOpacity onPress={() => { }}>
+        <TouchableOpacity onPress={() => {
+          navigation.navigate('ManuelPayment', {
+            userId: uId,
+            paymentPlanId: paymentPlanId,
+            duration_in_number: duration_in_number,
+            duration_in_name: duration_in_name,
+            amount: amount,
+            subName: subName,
+          })
+        }}>
           <LinearGradient
             // Button Linear Gradient
-            colors={['#900C3F', '#C70039', '#FF5733']}
+            colors={['#00FF00', '#008000', '#32CD32']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.btnManual}
           >
             <Text style={{ alignSelf: 'center', fontWeight: 'bold', color: '#ddd', fontSize: 15 }}>
-              Pay Manuel
+            Proceed with Bank Transfer
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -244,7 +253,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     borderRadius: 10,
     width: '100%',
-    backgroundColor: 'rgba(100, 105, 90, 0.5)',
+    backgroundColor: '#4169E1',
     zIndex: 100
   },
   container: {

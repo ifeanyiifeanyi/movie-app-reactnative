@@ -15,6 +15,8 @@ import VerifyEmail from './src/screens/VerifyEmail'
 import PaymentPlan from './src/screens/PaymentPlan'
 import ConfirmPayment from './src/screens/ConfirmPayment'
 import EditProfile from './src/screens/EditProfile'
+import ChangePassword from './src/screens/ChangePassword';
+import ManuelPayment from './src/screens/ManuelPayment';
 
 const Stack = createStackNavigator();
 
@@ -76,6 +78,16 @@ const App = () => {
                 <Stack.Screen 
                     name='EditProfile' 
                     component={EditProfile} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='ChangePassword' 
+                    component={ChangePassword} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='ManuelPayment' 
+                    component={ManuelPayment} 
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

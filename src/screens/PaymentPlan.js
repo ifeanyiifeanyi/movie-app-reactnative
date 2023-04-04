@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
 import axios from "axios";
-import { initCsrf } from './api';
 
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -27,7 +26,6 @@ const PaymentPlan = ({ navigation }) => {
 
   useEffect(() => {
     getData();
-    initCsrf();
   }, [])
 
   const getData = () => {

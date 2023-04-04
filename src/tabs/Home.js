@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar'
 import { useNavigation } from '@react-navigation/native'
 import { BASE_URL } from '@env';
 import axios from "axios";
-import { initCsrf } from '../screens/api';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const IMAGES = [
@@ -63,7 +62,6 @@ const Home = () => {
 
   useEffect(() => {
     getData();
-    initCsrf();
   }, [])
 
   // fetch all neccessary information with asynstorage
@@ -132,16 +130,15 @@ const Home = () => {
   }, []);
 
 
-
   //  fetch id and thumbnail from api
   const getVideos = async () => {
     setLoading(true)
     axios({
-      url: `${BASE_URL}/api/allvideo`,
-      method: "GET",
-      header: {
-        'Authorization': 'Bearer ' + token
-      },
+      url: `${BASE_URL}/api/allvideo`
+      // method: "GET",
+      // header: {
+      //   'Authorization': 'Bearer ' + token
+      // },
     }).then(res => {
       setLoading(false);
       SetVideoList(res.data);
@@ -172,6 +169,7 @@ const Home = () => {
       SetVideoListByCategory(res.data);
       console.log(res.data)
     }).catch((err) => {
+
       console.log(err);
     })
   }
@@ -181,9 +179,7 @@ const Home = () => {
     axios({
       url: `${BASE_URL}/api/allvideobyrating`,
       method: "GET",
-      header: {
-        'Authorization': 'Bearer ' + token
-      },
+      
     }).then(res => {
       SetVideoListByRating(res.data);
       console.log(res.data)
@@ -197,10 +193,7 @@ const Home = () => {
   const getCategories = async () => {
     axios({
       url: `${BASE_URL}/api/categories`,
-      method: "GET",
-      header: {
-        'Authorization': 'Bearer ' + token
-      },
+      method: "GET"
     }).then(res => {
       setList(res.data);
       console.log(response)
@@ -234,6 +227,7 @@ const Home = () => {
       },
     }).then(res => {
       setSecondCategory(res.data);
+      console.log("second category Api call", res.data);
     }).catch((err) => {
       console.log(err);
     });
@@ -306,8 +300,8 @@ const Home = () => {
 
                         <View style={styles.nextWatchView}>
 
-                          <Text style={{ color: 'gold', textTransform: 'capitalize', fontWeight: 'slim', fontSize: 15, }}>{item.title}</Text>
-                          <Image source={require('../img/logo/option.png')} style={{ width: 15, height: 15, tintColor: 'teal', marginRight: 10 }} />
+                          <Text style={{ color: 'gold', textTransform: 'capitalize', fontWeight: 'slim', fontSize: 13, }}>{item.title}</Text>
+                         
 
                         </View>
 
@@ -329,8 +323,9 @@ const Home = () => {
                     return (
                       <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { videoId: item.id }) }}>
                         <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
+                        
                         <View style={styles.videoLabel}>
-                          <Text style={styles.videoLabelText}>{item.rateName}</Text>
+                          <Text style={styles.videoLabelText}>{item.catName}</Text>
                         </View>
                       </TouchableOpacity>
                     )
@@ -406,16 +401,20 @@ const styles = StyleSheet.create({
   },
   categoryView: {
     flexDirection: 'row',
-    width: '80%',
+    width: '100%',
     alignSelf: 'center',
     justifyContent: 'space-around',
     // marginTop: 20,
+    backgroundColor: 'rgba(0,0,0,0.7)', // add a dark transparent background
+    padding: 10,
+    fontSize:18,
   },
   categoryTab: {
-    width: '30%',
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#434343',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    margin: 30,
   },
   categoryText: {
     color: 'gold',
@@ -493,6 +492,7 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: 'center',
     alignItems: 'center',
+    borderTopRightRadius: 10,
   },
   videoLabelText: {
     color: 'khaki',

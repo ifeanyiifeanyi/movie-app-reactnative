@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
 import axios from "axios";
 import { LinearGradient } from 'expo-linear-gradient';
-import { initCsrf } from './api';
 
 
 // //
@@ -30,10 +29,7 @@ const SelectUser = ({ navigation, route }) => {
   // user if active plan if there is?
   const [userPlan, setUserPlan] = useState();
 
-  useEffect(() => {
-    initCsrf();
-  }, []);
-
+ 
   useEffect(() => {
     userActivePlan();
     getData();
@@ -119,21 +115,19 @@ const SelectUser = ({ navigation, route }) => {
     axios({
       url: `${BASE_URL}/api/userActivePlan/${user_id ? user_id : uId}`,
       method: "GET",
-      header: {
-        'Authorization': 'Bearer ' + token
-      },
+    
     }).then(res => {
       setUserPlan(res.data[0]);
       console.log(res.data)
     }).catch((err) => {
       console.log(err)
-      Alert.alert('Something went wrong.', "Please try again later", [
-        {
-          text: "Try Again",
-          onPress: () => userActivePlan,
-          style: "cancel"
-        }
-      ]);
+      // Alert.alert('Something went wrong.', "Please try again later", [
+      //   {
+      //     text: "Try Again",
+      //     onPress: () => userActivePlan,
+      //     style: "cancel"
+      //   }
+      // ]);
     })
   }
 
@@ -158,6 +152,7 @@ const SelectUser = ({ navigation, route }) => {
             <View>
               {
                 parseInt(subscriptionId) > 0 ?
+
                   (
                     <TouchableOpacity
                       style={styles.viewVideoOne}
@@ -170,7 +165,7 @@ const SelectUser = ({ navigation, route }) => {
                       style={styles.viewVideoOne}
                       onPress={() => { navigation.navigate("PaymentPlan") }}>
                       <Image source={require('../img/logo/restricted-area.png')} style={{ width: 20, height: 20 }} />
-                      <Text style={{ color: '#ddd' }}> Access Denied</Text>
+                      <Text style={{ color: '#ddd' }}> Please Subscribe</Text>
                     </TouchableOpacity>
                   )
               }
@@ -235,7 +230,7 @@ const SelectUser = ({ navigation, route }) => {
                   <TouchableOpacity onPress={() => navigation.navigate('PaymentPlan')}>
                     <View style={styles.userDetailSubscribeNotDone}>
                       <Image source={require('../img/logo/subscription.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
-                      <Text style={{ color: '#ddd' }}> Please Subscribe</Text>
+                      <Text style={{ color: '#ddd' }}> Subscribe for Latest Contents</Text>
                     </View>
                   </TouchableOpacity>
                 )
@@ -243,7 +238,7 @@ const SelectUser = ({ navigation, route }) => {
           </View>
 
 
-          <TouchableOpacity onPress={() => { }}>
+          <TouchableOpacity onPress={() => { navigation.navigate('ChangePassword') }}>
             <View style={[styles.userDetails, { backgroundColor: '#21D190' }]}>
               <Image source={require('../img/logo/padlock.png')} style={{ width: 20, height: 20, marginLeft: 10 }} />
               <Text style={{ color: '#ddd' }}> Change Password</Text>

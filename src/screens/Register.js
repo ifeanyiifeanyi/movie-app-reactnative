@@ -28,10 +28,10 @@ export default function Register() {
 
   const register = async (name, username, email, password) => {
     if (!name.trim() || !username.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-      Alert.alert("All fields are required!");
+      Alert.alert("Error!", "All fields are required!");
       return;
     } else if (password.trim() !== confirmPassword.trim()) {
-      Alert.alert("Passwords do not match!")
+      Alert.alert("Warning", "Passwords do not match!")
       return;
     } else {
       axios.post(`${BASE_URL}/api/register`, {
@@ -75,7 +75,17 @@ export default function Register() {
             errorPassword: response.data.message.password ? response.data.message.password[0] : ""
           });
         }
-      }).catch(e => console.log(e.message))
+      }).catch(e => {
+        Alert.alert('Failed!', 'Registration Failed', [
+          {
+            text: 'Ok',
+            onPress: () => navigation.navigate('Register',)
+          }
+        ],
+          { cancelable: true }
+        );
+        console.log("Register Error: ", e.message)
+      })
     }
   }
 
@@ -126,6 +136,7 @@ export default function Register() {
           placeholder="Enter Email Address."
           placeholderTextColor="#003f5c"
           value={email}
+          keyboardType="email-address"
           onChangeText={(email) => setEmail(email)}
         />
       </View>
@@ -198,7 +209,6 @@ const styles = StyleSheet.create({
     width: "90%",
     height: 60,
     marginBottom: 20,
-    marginLeft: 16,
   },
 
   TextInput: {

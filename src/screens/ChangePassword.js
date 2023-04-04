@@ -12,12 +12,16 @@ import {
     SafeAreaView,
 } from "react-native";
 
-export default function App() {
-    const navigation = useNavigation();
-    const [email, setEmail] = useState("");
+
+const ChangePassword = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [email, setEmail] = useState("");
 
     return (
-
         <View style={styles.container}>
             <Image style={styles.image} source={require("../img/logo/loginlogo.png")} />
 
@@ -30,18 +34,44 @@ export default function App() {
                     onChangeText={(email) => setEmail(email)}
                 />
             </View>
+            <View style={[styles.inputView, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+                <TextInput
+                    style={styles.TextInput}
+                    placeholder="Enter Password."
+                    placeholderTextColor="#003f5c"
+                    value={password}
+                    secureTextEntry={!showPassword}
+                    onChangeText={(password) => setPassword(password)}
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                    <Image source={!showPassword ? require('../img/logo/eye.png') : require('../img/logo/close-eyes.png')} style={{ width: 30, height: 30, marginRight: 20 }} />
+                </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity onPress={()=>{navigation.navigate("Login")}}>
-                <Text style={styles.forgot_button}>Back To Login</Text>
-            </TouchableOpacity>
+
+            <View style={styles.inputView}>
+                <TextInput
+                    style={styles.TextInput}
+                    placeholder="Confirm Password."
+                    placeholderTextColor="#003f5c"
+                    value={confirmPassword}
+                    secureTextEntry={true}
+                    onChangeText={(confirmPassword) => setConfirmPassword(confirmPassword)}
+                />
+            </View>
 
             <TouchableOpacity style={styles.loginBtn}>
                 <Text style={styles.loginText}>RECOVER PASSWORD</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => { navigation.navigate("SelectUser") }}>
+                <Text style={styles.forgot_button}>Back to Profile</Text>
+            </TouchableOpacity>
         </View>
-    );
+    )
 }
 
+export default ChangePassword
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -75,6 +105,9 @@ const styles = StyleSheet.create({
     forgot_button: {
         height: 30,
         marginBottom: 30,
+        color: 'royalblue',
+        fontSize: 20,
+        marginTop: 20,
     },
 
     loginBtn: {
