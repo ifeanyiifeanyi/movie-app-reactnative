@@ -20,6 +20,11 @@ const Splash = () => {
     return () => {
       console.log("calling network error");
     };
+    NetInfo.addEventListener(state => {
+      console.log('Connection type: ', state.type);
+      console.log('Is connected? ', state.isConnected);
+      console.log('Is internet reachable? ', state.isInternetReachable);
+    });
   }, []);
 
   useEffect(() => {

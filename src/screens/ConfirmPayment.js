@@ -190,7 +190,7 @@ export default function ConfirmPayment({ props, route }) {
           <LinearGradient
 
             // Button Linear Gradient
-            colors={['#4169E1', '#1E90FF', '#000080']}
+            colors={['#4169E1', '#1E90FF', '#1E90FF']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.btn}
@@ -215,7 +215,7 @@ export default function ConfirmPayment({ props, route }) {
         }}>
           <LinearGradient
             // Button Linear Gradient
-            colors={['#00FF00', '#008000', '#32CD32']}
+            colors={['#00FF00', '#32CD32', '#008000']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.btnManual}

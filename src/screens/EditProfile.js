@@ -195,16 +195,16 @@ const styles = StyleSheet.create({
         backgroundColor: "teal",
         borderRadius: 10,
         width: "90%",
-        height: 45,
+        height: 65,
         marginBottom: 20,
-        marginLeft: 16,
+        marginLeft: 5,
     },
 
     TextInput: {
         height: 50,
         flex: 1,
         padding: 10,
-        marginLeft: 20,
+        marginLeft: 5,
     },
 
     forgot_button: {
