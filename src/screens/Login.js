@@ -7,7 +7,10 @@ import axios from "axios";
 import * as Device from 'expo-device';
 
 
-export default function Login() {
+export default function Login({ route }) {
+    let { update } = route.params ? route.params : {}; // used for when a user updates details
+    let { updateUsername } = route.params ? route.params : {}; // used for when a user updates details
+
     const navigation = useNavigation();
 
     const [showPassword, setShowPassword] = useState(false)
@@ -37,7 +40,7 @@ export default function Login() {
             Alert.alert("warning", "Password must not be less than 8 characters!");
             return;
         } else {
- 
+
             axios.post(`${BASE_URL}/api/login`, {
                 username: username,
                 password: password,
@@ -107,6 +110,20 @@ export default function Login() {
         }
     }
 
+    const RefreshNow = async () => {
+        try {
+            // Clear AsyncStorage
+            await AsyncStorage.clear();
+
+            // Navigate to the login page
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
     return (
 
         <View style={styles.container}>
@@ -119,15 +136,22 @@ export default function Login() {
                 </Text>
             )}
 
-            {success && (<Text style={{ color: 'limegreen', marginBottom: 20 }}>{success}</Text>)}
-         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            {success && (<Text style={{ color: 'limegreen', marginBottom: 20, fontWeight: '900' }}>     {success}</Text>
+            )}
+
+            {update && (
+                <Text style={{ color: 'limegreen', marginBottom: 20, fontWeight: '900' }}>{update}</Text>
+            )}
+
+
+            {/* work on it later */}
 
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.TextInput}
                     placeholder="Enter Username | Email"
                     placeholderTextColor="#003f5c"
-                    value={username}
+                    value={username || updateUsername ? updateUsername : ""}
                     onChangeText={(username) => setUsername(username)}
                 />
             </View>
@@ -146,21 +170,35 @@ export default function Login() {
                     <Image source={!showPassword ? require('../img/logo/eye.png') : require('../img/logo/close-eyes.png')} style={{ width: 30, height: 30, marginRight: 20 }} />
                 </TouchableOpacity>
             </View>
-
-            {/* link to forgot password page */}
-            <TouchableOpacity onPress={() => { navigation.navigate("RecoverPassword") }}>
-                <Text style={styles.forgot_button}>Forgot Password?</Text>
-            </TouchableOpacity>
-
-            {/* link to Register new user page */}
-            <TouchableOpacity onPress={() => { navigation.navigate("Register") }}>
-                <Text style={styles.forgot_button}>Not a user? <Text style={{ color: 'teal' }}>Sign Up</Text></Text>
-            </TouchableOpacity>
-
-
             <TouchableOpacity onPress={() => login(username, password)} style={styles.loginBtn}>
                 <Text>LOGIN</Text>
             </TouchableOpacity>
+
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '80%' }}>
+                {/* link to forgot password page */}
+                <TouchableOpacity onPress={() => { navigation.navigate("RecoverPassword") }}>
+                    <Text style={styles.forgot_button}><Text style={{ color: 'gold', fontWeight: '900' }}>Forgot Password?</Text></Text>
+                </TouchableOpacity>
+
+                {/* link to Register new user page */}
+                <TouchableOpacity onPress={() => { navigation.navigate("Register") }}>
+                    <Text style={styles.forgot_button}><Text style={{ color: 'teal' }}>Sign Up</Text></Text>
+                </TouchableOpacity>
+            </View>
+
+
+
+
+
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+
+            {update && (
+                <TouchableOpacity onPress={RefreshNow} style={{ marginTop: 20, backgroundColor: 'royalblue', padding: 10, borderRadius: 12 }}>
+                    <Text style={{ color: '#ddd', fontWeight: '900' }}>Refresh</Text>
+                </TouchableOpacity>
+            )}
+
         </View>
     );
 }
@@ -199,15 +237,17 @@ const styles = StyleSheet.create({
     forgot_button: {
         height: 30,
         marginBottom: 30,
+        marginRight: 20
     },
 
     loginBtn: {
-        width: "80%",
+        width: "90%",
         borderRadius: 10,
         height: 50,
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 40,
+        marginTop: 10,
+        marginBottom: 30,
         backgroundColor: "#6F8FAF",
     },
 });

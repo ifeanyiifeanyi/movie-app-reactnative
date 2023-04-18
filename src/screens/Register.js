@@ -175,14 +175,15 @@ export default function Register() {
           onChangeText={(confirmPassword) => setConfirmPassword(confirmPassword)}
         />
       </View>
+      <TouchableOpacity onPress={() => register(name, username, email, password)} style={styles.loginBtn}>
+        <Text style={{ color: '#ddd', fontSize: 18 }}>SIGN UP</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity onPress={() => { navigation.navigate("Login") }}>
         <Text style={styles.forgot_button}>A Member? <Text style={{ color: 'teal' }}>Sign In</Text></Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => register(name, username, email, password)} style={styles.loginBtn}>
-        <Text style={{ color: '#ddd', fontSize: 18 }}>SIGN UP</Text>
-      </TouchableOpacity>
+     
     </View>
   );
 }
@@ -224,12 +225,13 @@ const styles = StyleSheet.create({
   },
 
   loginBtn: {
-    width: "80%",
+    width: "90%",
     borderRadius: 10,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
+    marginTop: 10,
+    marginBottom:25,
     backgroundColor: "#6F8FAF",
   },
 });

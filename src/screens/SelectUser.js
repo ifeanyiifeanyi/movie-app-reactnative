@@ -29,7 +29,7 @@ const SelectUser = ({ navigation, route }) => {
   // user if active plan if there is?
   const [userPlan, setUserPlan] = useState();
 
- 
+
   useEffect(() => {
     userActivePlan();
     getData();
@@ -95,14 +95,19 @@ const SelectUser = ({ navigation, route }) => {
   const handleLogout = async () => {
     try {
       // TODO: write api request to logout user from server
-      await AsyncStorage.clear(); //clear all data
-      Alert.alert('Successful.', "Bye for now!!", [
+      Alert.alert('Successful.', "Click OK to Logout", [
         {
-          text: "Logout",
-          onPress: () => navigation.navigate('Login'), // navigate to login page,
+          text: "Ok",
+          onPress: () => {
+            AsyncStorage.clear(); //clear all data
+
+            navigation.navigate('Login')
+          }, // navigate to login page,
           style: "cancel"
+        }, {
+          text: "Cancel"
         }
-      ]);
+      ], { cancelable: true });
     } catch (error) {
       console.log(error);
     }
@@ -115,7 +120,7 @@ const SelectUser = ({ navigation, route }) => {
     axios({
       url: `${BASE_URL}/api/userActivePlan/${user_id ? user_id : uId}`,
       method: "GET",
-    
+
     }).then(res => {
       setUserPlan(res.data[0]);
       console.log(res.data)

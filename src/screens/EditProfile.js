@@ -96,86 +96,99 @@ export default function EditProfile() {
         }
     }
 
-    const upDateProfile = (nameSubmit, usernameSubmit, emailSubmit) => {
-        if(!nameSubmit.trim() || !usernameSubmit.trim() || !emailSubmit.trim()){
-            Alert.alert('Required!', 'All fields are required!', [
-                {
-                  text: 'OK',
-                  onPress: () => this,
-                },
-              ],
-              { cancelable: true },
-            );
-        }else{
-            axios.post(`${BASE_URL}/api/updateProfile`, {
-                uId: uId,
-                name: nameSubmit,
-                username: usernameSubmit,
-                email: emailSubmit,
-                devicename: Device.modelName
-            }).then(async response => {
-                if(response.data.status){
-                    AsyncStorage.setItem('name', JSON.stringify(nameSubmit))
-                  .then(() => console.log('name updated!'))
-                  .catch(error => console.error(error));
-                  AsyncStorage.setItem('email', JSON.stringify(emailSubmit))
-                  .then(() => console.log('email updated!'))
-                  .catch(error => console.error(error));
-                  AsyncStorage.setItem('username', JSON.stringify(usernameSubmit))
-                  .then(() => console.log('username updated!'))
-                  .catch(error => console.error(error));
 
-                    Alert.alert('Successful!', 'Profile Updated successfully!', [
-                        {
-                          text: 'OK',
-                          onPress: () => navigation.navigate('SelectUser'),
+    // const handleNameChange = (value) => {
+    //     setNameSubmit(value);
+    // }
+
+    // const handleUsernameChange = (value) => {
+    //     setUsernameSubmit(value);
+    // }
+
+    // const handleEmailChange = (value) => {
+    //     setEmailSubmit(value);
+    // }
+
+    const upDateProfile = async (nameSubmit, usernameSubmit) => {
+
+        axios.post(`${BASE_URL}/api/updateProfile`, {
+            uId: uId,
+            name: nameSubmit,
+            username: usernameSubmit,
+            devicename: Device.modelName
+        }).then(async response => {
+
+            if (response.data.success === true) {
+
+                Alert.alert('Successful!', 'Profile Updated successfully!', [
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            AsyncStorage.clear(); //clear all data
+
+                            navigation.navigate('Login', { update: "Login With Updated User Details", updateUsername: usernameSubmit })
                         },
-                      ],
-                      { cancelable: false },
-                    );
-                }else{
-                    setError(response.data.message);
-                }
-            })
+                    },
+
+                ],
+                    { cancelable: false });
+
+                setSuccess(response.data.message)
+
+                console.log("success", response)
+            } else {
+                setError(response.data.error)
+            }
+        }).catch(error => {
+            // console.error("Catch: ", error);
+            if (error.response.status === 422) {
+                setError(error.response.data.error)
+            }
+            setError(error.response.data.error)
+
         }
+        );
+
     }
     return (
         <View style={styles.container}>
-            <Text style={{ fontSize:25, marginBottom:25}}>Edit Profile </Text>
+            <Text style={{ fontSize: 25, marginBottom: 25 }}>Edit Profile </Text>
 
             <StatusBar style="auto" />
 
             {success && (<Text style={{ color: 'limegreen', marginBottom: 20 }}>{success}</Text>)}
-            {error && (<Text style={{ color: 'crimson', marginBottom: 20, fontWeight:'bold' }}>{error}</Text>)}
+          
+            {error && (
+                <View>
+                    {Object.keys(error).map((key) => (
+                        <Text key={key} style={{ color: 'crimson', marginBottom: 20, fontWeight: 'bold' }}>{error[key]}</Text>
+                    ))}
+                </View>
+            )}
 
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.TextInput}
                     placeholderTextColor="#003f5c"
-                    value={name}
-                    onChangeText={(nameSubmit) => setNameSubmit(nameSubmit)}
+                    value={(nameSubmit || name).replace(/"/g, '')}
+                    onChangeText={nameSubmit => setNameSubmit(nameSubmit)}
+                    placeholder="Name"
                 />
             </View>
-           
+
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.TextInput}
                     placeholderTextColor="#003f5c"
-                    value={username}
+                    value={(usernameSubmit || username).replace(/"/g, '')}
                     onChangeText={(usernameSubmit) => setUsernameSubmit(usernameSubmit)}
-                />
-            </View>
-            
-            <View style={styles.inputView}>
-                <TextInput
-                    style={styles.TextInput}
-                    placeholderTextColor="#003f5c"
-                    value={email}
-                    onChangeText={(emailSubmit) => setEmail(emailSubmit)}
+                    placeholder="Username"
                 />
             </View>
 
-            <TouchableOpacity onPress={() => upDateProfile(name, username, email)} style={styles.loginBtn}>
+
+
+            <TouchableOpacity onPress={() => upDateProfile(nameSubmit, usernameSubmit)} style={styles.loginBtn}>
                 <Text style={{ color: '#ddd', fontSize: 18 }}>UPDATE</Text>
             </TouchableOpacity>
         </View>
