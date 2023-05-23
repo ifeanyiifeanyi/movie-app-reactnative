@@ -172,7 +172,7 @@ export default function VideoDetail({ route }) {
 
     useEffect(() => {
         if (refresh) {
-            Alert.alert('Success', 'Thanks for the like!', [
+            Alert.alert('Success', 'Action performed successfully', [
                 {
                     text: 'Ok',
                     onPress: () => setRefresh(false)
@@ -182,6 +182,7 @@ export default function VideoDetail({ route }) {
             );
         }
     }, [refresh]);
+
     function likeVideo() {
         try {
             axios.post(`${BASE_URL}/api/videolikes/likes`,
@@ -194,6 +195,29 @@ export default function VideoDetail({ route }) {
                     setRefresh(true)
                     // navigation.navigate('VideoDetail')
                     console.log(res.data.likes)
+                }).catch(err => {
+                    console.log(err)
+                    Alert.alert("warning", err.response.data.message, [
+                        {
+                            text: 'OK',
+                        }
+                    ])
+                });
+        } catch (err) {
+            console.log(err)
+           
+        }
+    }
+    function disLikeVideo() {
+        try {
+            axios.post(`${BASE_URL}/api/videodislikes/dislikes`,
+                {
+                    videoId: videoId,
+                    userId: uId
+                }, options).then(res => {
+                    console.log(res.data.likes)
+                    setLikes(res.data.likes)
+                    setRefresh(true)
                 }).catch(err => {
                     console.log(err)
                 });
@@ -293,7 +317,7 @@ export default function VideoDetail({ route }) {
                         </Text>
                     </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center', marginLeft: 10 }}>
-                        <Image style={{ width: 20, height: 20 }} source={require("../img/logo/heart.png")} />
+                        <Image style={{  width: 20, height: 20 }} source={require("../img/logo/heart.png")} />
                         <Text style={{ color: '#ddd' }}>{
                             videoData.likes ? videoData.likes : likes} Like
                         </Text>
@@ -343,12 +367,12 @@ export default function VideoDetail({ route }) {
                     <Text style={{ fontSize: 16, fontWeight: '800', color: 'teal', marginLeft: 10, marginTop: 8 }}># {videoData.catName ? videoData.catName : "Loading"}</Text>
 
                 </View>
-                <TouchableOpacity style={{
+                {/* <TouchableOpacity style={{
                     width: '98%', height: 50, backgroundColor: '#05D6D9', alignSelf: 'center', borderRadius: 10, marginTop: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'
                 }}>
                     <Image source={require("../img/logo/download1.png")} style={{ width: 24, height: 24, tintColor: '#ddd' }} />
                     <Text style={{ fontSize: 18, marginLeft: 10, fontWeight: '600', color: 'ddd' }}>Download</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 <Text style={{
                     color: '#d4d4d4', lineHeight: 20, textAlign: 'justify', margin: 20, fontSize: 15, alignSelf: 'center', width: '90%'
@@ -364,10 +388,10 @@ export default function VideoDetail({ route }) {
                     </TouchableOpacity>
 
                     {
-                        videoData.likes && parseInt(videoData.likes) > 0 || parseInt(likes) > 0 ? (
-                            <TouchableOpacity onPress={likeVideo} style={{ width: 100, height: 50, justifyContent: 'center', alignItems: 'center', marginLeft: 20 }}>
+                        (videoData.likes && videoData.likes.length > 0) || parseInt(videoData.likes) > 0 ? (
+                            <TouchableOpacity onPress={disLikeVideo} style={{ width: 100, height: 50, justifyContent: 'center', alignItems: 'center', marginLeft: 20 }}>
                                 <Image source={require('../img/logo/dislike.png')} style={{ width: 40, height: 40 }} />
-                                <Text style={{ color: 'teal', marginTop: 5, fontWeight: 'bold' }}>Dislike</Text>
+                                <Text style={{ color: 'teal', marginTop: 5, fontWeight: 'bold' }}>Unlike</Text>
                             </TouchableOpacity>
                         ) : (<TouchableOpacity onPress={likeVideo} style={{ width: 100, height: 50, justifyContent: 'center', alignItems: 'center', marginLeft: 20 }}>
                             <Image source={require('../img/logo/like.png')} style={{ width: 40, height: 40 }} />

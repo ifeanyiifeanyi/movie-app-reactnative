@@ -38,9 +38,10 @@ const HomeScreen = () => {
               require('../img/logo/history.png') : require('../img/logo/medical-report.png')
             } 
             style={selectedBottomItem == 1 ? styles.bottomNavigationCardImageActive : styles.bottomNavigationCardImage}  />
-          <Text style={styles.bottomNavigationCardText}>New & Hot</Text>
+          <Text style={styles.bottomNavigationCardText}>Articles</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bottomNavigationCard} onPress={() => {
+
+        {/* <TouchableOpacity style={styles.bottomNavigationCard} onPress={() => {
           setSelectedBottomItem(2)
         }}>
           <Image 
@@ -51,29 +52,9 @@ const HomeScreen = () => {
             style={selectedBottomItem == 2 ? styles.bottomNavigationCardImageActive : styles.bottomNavigationCardImage}  
           />
           <Text style={styles.bottomNavigationCardText}>Life Style</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bottomNavigationCard} onPress={() => {
-          setSelectedBottomItem(3)
-        }}>
-          <Image 
-            source={ selectedBottomItem == 3 ? 
-              require('../img/logo/search.png') : require('../img/logo/loupe.png')
-            } 
-            style={selectedBottomItem == 3 ? styles.bottomNavigationCardImageActive : styles.bottomNavigationCardImage}  
-            />
-          <Text style={styles.bottomNavigationCardText}>Search</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bottomNavigationCard} onPress={() => {
-          setSelectedBottomItem(4)
-        }}>
-          <Image 
-            source={ selectedBottomItem == 4 ?
-              require('../img/logo/download.png') : require('../img/logo/download1.png')
-            } 
-            style={selectedBottomItem == 4 ? styles.bottomNavigationCardImageActive : styles.bottomNavigationCardImage}  
-          />
-          <Text style={styles.bottomNavigationCardText}>Downloads</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+       
+       
       </View>
     </View>
   )
@@ -94,7 +75,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 65,
     bottom: 0,
-    backgroundColor: '#000'
+    backgroundColor: '#000',
+    width:'100%'
   },
   bottomNavigationCard: {
     justifyContent: 'center',
@@ -116,7 +98,7 @@ const styles = StyleSheet.create({
   bottomNavigationCardText:{
     color: 'teal',
     marginTop: 5,
-    fontSize: 10,
+    fontSize: 15,
     opacity: 0.6,
   },
   bottomNavigationCardTextActive:{

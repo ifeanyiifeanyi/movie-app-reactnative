@@ -17,6 +17,9 @@ import ConfirmPayment from './src/screens/ConfirmPayment'
 import EditProfile from './src/screens/EditProfile'
 import ChangePassword from './src/screens/ChangePassword';
 import ManuelPayment from './src/screens/ManuelPayment';
+import BlogContent from './src/screens/BlogContent';
+import NetInfo from '@react-native-community/netinfo';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 
@@ -88,6 +91,11 @@ const App = () => {
                 <Stack.Screen 
                     name='ManuelPayment' 
                     component={ManuelPayment} 
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen 
+                    name='BlogContent' 
+                    component={BlogContent} 
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

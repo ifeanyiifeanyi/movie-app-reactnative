@@ -43,7 +43,7 @@ const Splash = () => {
     }, 2000);
   }, [])
   const handleGetToken = async () => {
-    const dataToken = await AsyncStorage.getItem('token');
+    const dataToken = await AsyncStorage.getItem('name');
     if (!dataToken) {
       navigation.navigate('Login');
     } else {

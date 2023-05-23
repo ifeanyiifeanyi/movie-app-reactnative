@@ -256,10 +256,9 @@ const Home = () => {
       <ScrollView>
         <View style={styles.container}>
           <StatusBar barStyle='light-content' />
-          <View style={styles.topView}>
+          {/* <View style={styles.topView}>
             <Image source={IMAGES[index]} style={styles.topView} />
 
-            {/* get categories from the server*/}
             <View style={styles.categoryView}>
               {list.map((item, index) => {
                 return (
@@ -269,7 +268,7 @@ const Home = () => {
                 )
               })}
             </View>
-          </View>
+          </View> */}
           <View style={styles.header}>
             <Image source={require('../img/logo/loginlogo.png')} style={styles.headerLogo} />
             <View style={styles.rightHeader}>
@@ -283,13 +282,14 @@ const Home = () => {
           {
             loading ? (
               (
-                <View style={[styles.secondView, {marginTop:500, alignSelf:'center'}]}>
-                <Image source={require('../img/logo/loading1.gif')} style={{width:350,height:350}} />
+                <View>
+                <ActivityIndicator color={'#24e566'} size={'large'}/>
+                </View>
                   
-                </View>)
+                )
             ) : (
               <View style={styles.secondView}>
-                <View style={{ marginTop: 190 }}>
+                <View style={{ marginTop: 5 }}>
                   <Text style={[styles.customTitle, { marginTop: 20 }]}>{thirdCategory.name ? thirdCategory.name : "Loading ..."}</Text>
                   <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoList} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
                     return (
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   },
   topView: {
     width: '100%',
-    height: 520,
+    // height: 520,
     position: 'absolute',
     top: 0,
     justifyContent: 'center',
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   secondView: {
-    marginTop: 200,
+    // marginTop: 20,
   },
   trendingVideoItem: {
     width: 150,
