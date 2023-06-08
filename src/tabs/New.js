@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     // height: '100%',
     objectFit: 'cover',
     marginTop: 20,
-    borderRadius: 10
+    // borderRadius: 10
   },
   post_title: {
     fontSize: 11,

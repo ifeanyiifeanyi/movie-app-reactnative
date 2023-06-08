@@ -49,7 +49,19 @@ export default function Login({ route }) {
             }).then(async response => {
                 // if login data return true 
                 if (response.data.status) {
-                    console.log(response.data)
+                    // console.log(response.data)
+                    const user_plan = response.data.user_plan;
+                    console.log("user plan data", user_plan)
+
+                    if (user_plan) {
+                        AsyncStorage.setItem('user_plan', JSON.stringify(user_plan))
+                            .then(() => {
+                                console.log('user_plan stored successfully');
+                            })
+                            .catch((error) => {
+                                console.log('Failed to store user_plan:', error);
+                            });
+                    }
 
                     // set empty error msgs if login success 
                     setError({

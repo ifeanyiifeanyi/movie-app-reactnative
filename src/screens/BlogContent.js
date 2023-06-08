@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image, ScrollView, SafeAreaView, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { BASE_URL } from '@env';
 import axios from 'axios';
@@ -6,26 +6,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BlogContent = ({ navigation, route }) => {
 
+    // fetch comments for a blog post 
+    const [getComments, setGetComments] = useState([])
+    const [getReplies, setGetReplies] = useState([])
+
     // get commit by user
     const [comment, setComment] = useState('');
     const [IsLoading, SetIsLoading] = useState(false);
 
-    function commentChange(value){
+    function commentChange(value) {
         setComment(value);
     }
 
-  // for async storage
-  const [name, setName] = useState('');
-  const [uId, setUId] = useState('');
-  const [token, setToken] = useState('');
-  const [username, setUserName] = useState('');
-  const [email, setEmail] = useState('');
-  const [userid, setuserId] = useState('');
-  const [subscriptionId, setSubscriptionId] = useState('');
+    // for async storage
+    const [name, setName] = useState('');
+    const [uId, setUId] = useState('');
+    const [token, setToken] = useState('');
+    const [username, setUserName] = useState('');
+    const [email, setEmail] = useState('');
+    const [userid, setuserId] = useState('');
+    const [subscriptionId, setSubscriptionId] = useState('');
 
 
     useEffect(() => {
         getData();
+        getUserComments();
+
     }, [])
 
     // set user asyn storage values
@@ -85,7 +91,7 @@ const BlogContent = ({ navigation, route }) => {
     console.log("user id", uId)
     //
     const content = route.params.item;
-    console.log("content:: ", content)
+
 
     // format date
     const dateObj = new Date(content.created_at);
@@ -128,23 +134,53 @@ const BlogContent = ({ navigation, route }) => {
             comment: comment
         }).then(response => {
             console.log(response.data)
+            if (response.data.success === true) {
+                SetIsLoading(false);
+                Alert.alert('Success', 'Your comment has been posted', [
+                    {
+                        text: "OK",
+                        onPress: () => {
+                            setComment('')
+                        }
+                    }
+                ]);
+            }
         })
     }
-    console.log(typeof parseInt(uId))
+
+    // get users comments
+    function getUserComments() {
+        // SetIsLoading(true);
+        axios.post(`${BASE_URL}/api/comments`, {
+            postId: content.id,
+        }).then(response => {
+            // console.log(response.data)
+
+            const data = response.data;
+            if (data.comments) {
+                setGetComments(data.comments)
+            }
+
+            if (data.replies) {
+                setGetReplies(data.replies)
+            }
+
+        }).catch(error => {
+            console.log(error)
+        })
+    }
 
     function validateComment() {
-        // var commentInput = [comment];
-        // var comment = comment.trim();
 
-        if(comment.trim().length < 2){
-           return Alert.alert("warning", "Please enter a valid comment");
-        }else{
+
+        if (comment.trim().length < 2) {
+            return Alert.alert("warning", "Please enter a valid comment");
+        } else {
             submitComment();
         }
     }
 
     return (
-
         <View style={styles.container}>
             <View style={styles.topView}>
                 <Image style={styles.bannerImage} source={{ uri: `${BASE_URL}/${content.thumbnail}` }} />
@@ -174,15 +210,15 @@ const BlogContent = ({ navigation, route }) => {
                     </View>
                     <View style={styles.textAreaContainer} >
                         {
-                            IsLoading ? <ActivityIndicator  size={'large'} color={'#2fc8f2'} /> : ''
+                            IsLoading ? <ActivityIndicator size={'large'} color={'#2fc8f2'} /> : ''
                         }
                         <TextInput
                             style={styles.textArea}
                             underlineColorAndroid="transparent"
                             placeholder="Type Your Comment Here ..."
                             placeholderTextColor="grey"
-                            multiline={true} 
-                            onChangeText={commentChange} 
+                            multiline={true}
+                            onChangeText={commentChange}
                             value={comment}
                         />
                         <TouchableOpacity style={styles.commentBtn} onPress={validateComment}>
@@ -191,10 +227,32 @@ const BlogContent = ({ navigation, route }) => {
                     </View>
                     <View style={styles.lines} />
                     <View>
-                        <Text>Comments ...</Text>
+                        <View>
+                            {getComments.length > 0 ? (
+                                getComments.map(comment => (
+                                    <View key={comment.id}>
+                                        <Text>{comment.username}</Text>
+                                        <Text>{comment.comment}</Text>
+                                    </View>
+                                ))
+                            ) : (
+                                <Text>No comments</Text>
+                            )}
+
+                            {getReplies.length > 0 && (
+                                <View>
+                                    <Text>Replies:</Text>
+                                    {getReplies.map(reply => (
+                                        <View key={reply.id}>
+                                            {/* <Text>{reply.username}</Text> */}
+                                            <Text>{reply.reply}</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
+                        </View>
                     </View>
                 </View>
-
             </ScrollView>
         </View>
     );
