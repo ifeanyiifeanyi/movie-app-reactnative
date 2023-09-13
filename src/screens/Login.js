@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert, RefreshControl } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BASE_URL } from '@env';
+import { EXPO_PUBLIC_BASE_URL } from '@env';
 import axios from "axios";
 import * as Device from 'expo-device';
 
@@ -41,7 +41,7 @@ export default function Login({ route }) {
             return;
         } else {
 
-            axios.post(`${BASE_URL}/api/login`, {
+            axios.post(`${EXPO_PUBLIC_BASE_URL}/api/login`, {
                 username: username,
                 password: password,
                 devicename: Device.modelName

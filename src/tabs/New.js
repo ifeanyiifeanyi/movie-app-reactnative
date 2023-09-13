@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TextInput, FlatList, ActivityIndicator, Image, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import { BASE_URL } from '@env';
+import { EXPO_PUBLIC_BASE_URL } from '@env';
 import * as Device from 'expo-device'
 import { useNavigation } from '@react-navigation/native'
 
@@ -12,7 +12,7 @@ const New = () => {
   const [blog, setBlog] = useState([]);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/blog`)
+    fetch(`${EXPO_PUBLIC_BASE_URL}/api/blog`)
       .then((res) => res.json())
       .then((res) => {
         setBlog(res)
@@ -63,7 +63,7 @@ const New = () => {
 
                     </View>
                     
-                    <Image style={styles.blogBanner} source={{ uri: `${BASE_URL}/${item.thumbnail}` }} />
+                    <Image style={styles.blogBanner} source={{ uri: `${EXPO_PUBLIC_BASE_URL}/${item.thumbnail}` }} />
                   </View>
                 </TouchableOpacity>
               )}

@@ -1,0 +1,33 @@
+{
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "production": {
+      "channel": "production",
+      "env": {
+        "EXPO_PUBLIC_BASE_URL": "https://api.coinstarr.org",
+        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_a1cf9f8bedcfc0ee5bbb2423690d16ecb418d8c7"
+      }
+    },
+    "staging": {
+      "channel": "staging"
+    },
+    "test": {
+      "env": {
+        "EXPO_PUBLIC_BASE_URL": "https://api.coinstarr.org",
+        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_a1cf9f8bedcfc0ee5bbb2423690d16ecb418d8c7"
+      }
+    }
+  }
+}

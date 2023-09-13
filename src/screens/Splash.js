@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Alert } from 'react-native'
+import { View, Text, StyleSheet, Image, Alert, LogBox } from 'react-native'
 import { useEffect, useState } from 'react'
 import { black } from '../utils/Colors'
 import { useNavigation } from '@react-navigation/native'
@@ -7,7 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Splash = () => {
-
+  LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
+  LogBox.ignoreAllLogs();
   const navigation = useNavigation();
 
   const [isConnected, setIsConnected] = useState(true);

@@ -3,7 +3,7 @@ import { Alert, ImageBackground, View, Text, StyleSheet, TouchableOpacity, Image
 import { useEffect, useState, useCallback } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BASE_URL } from '@env';
+import { EXPO_PUBLIC_BASE_URL } from '@env';
 import axios from "axios";
 import { LinearGradient } from 'expo-linear-gradient';
 import moment from 'moment';

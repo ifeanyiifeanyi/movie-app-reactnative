@@ -2,7 +2,7 @@ import { FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableO
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useNavigation } from '@react-navigation/native'
-import { BASE_URL } from '@env';
+import { EXPO_PUBLIC_BASE_URL } from '@env';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -45,7 +45,7 @@ const Home = () => {
   //get video thumbnail for caruosel from api
   const videoThumbnails = () => {
     axios({
-      url: `${BASE_URL}/api/thumbnail`,
+      url: `${EXPO_PUBLIC_BASE_URL}/api/thumbnail`,
       method: "GET"
     }).then(res => {
       setList(res.data);
@@ -57,7 +57,7 @@ const Home = () => {
   //get categories from api
   const getCategories = () => {
     axios({
-      url: `${BASE_URL}/api/categories`,
+      url: `${EXPO_PUBLIC_BASE_URL}/api/categories`,
       method: "GET"
     }).then(res => {
       setList(res.data);
@@ -69,7 +69,7 @@ const Home = () => {
   //  fetch id and thumbnail from api
   const getVideos = () => {
     axios({
-      url: `${BASE_URL}/api/allvideo`,
+      url: `${EXPO_PUBLIC_BASE_URL}/api/allvideo`,
       method: "GET"
     }).then(res => {
       SetVideoList(res.data);
@@ -80,7 +80,7 @@ const Home = () => {
   }
   const getVideosByRating = () => {
     axios({
-      url: `${BASE_URL}/api/allvideobyrating`,
+      url: `${EXPO_PUBLIC_BASE_URL}/api/allvideobyrating`,
       method: "GET"
     }).then(res => {
       SetVideoListByRating(res.data);
@@ -91,7 +91,7 @@ const Home = () => {
   }
   const getVideosByCategory = () => {
     axios({
-      url: `${BASE_URL}/api/allvideobycategory`,
+      url: `${EXPO_PUBLIC_BASE_URL}/api/allvideobycategory`,
       method: "GET"
     }).then(res => {
       SetVideoListByCategory(res.data);
@@ -126,7 +126,7 @@ const Home = () => {
               videoList.map((item, _index) => {
                 return (
                   <View>
-                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.topView} key={item.id} />
+                    <Image source={{ uri: `${EXPO_PUBLIC_BASE_URL}/${item.thumbnail}` }} style={styles.topView} key={item.id} />
 
                     <Text style={styles.VideoHeadTitles}>{item.title}</Text>
                   </View>
@@ -166,7 +166,7 @@ const Home = () => {
                 return (
                   <TouchableOpacity style={styles.trendingVideoItem} onPress={() => { navigation.navigate('VideoDetail', { id: item.id }) }}>
 
-                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={{ width: 150, height: 170, borderRadius: 10 }} />
+                    <Image source={{ uri: `${EXPO_PUBLIC_BASE_URL}/${item.thumbnail}` }} style={{ width: 150, height: 170, borderRadius: 10 }} />
 
 
                     <View style={styles.nextWatchView}>
@@ -188,7 +188,7 @@ const Home = () => {
               <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByRating} horizontal showsHorizontalScrollIndicator={false} renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity style={styles.trendingVideoItem}>
-                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
+                    <Image source={{ uri: `${EXPO_PUBLIC_BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
                     <View style={styles.videoLabel}>
                       <Text style={styles.videoLabelText}>{item.rateName}</Text>
                     </View>
@@ -201,7 +201,7 @@ const Home = () => {
               <FlatList contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} data={videoListByCategory} horizontal renderItem={({ item, image }) => {
                 return (
                   <TouchableOpacity style={styles.trendingVideoItem}>
-                    <Image source={{ uri: `${BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
+                    <Image source={{ uri: `${EXPO_PUBLIC_BASE_URL}/${item.thumbnail}` }} style={styles.trendingVideoItemImage} />
                     <View style={styles.videoLabel}>
                       <Text style={styles.videoLabelText}>{item.catName}</Text>
                     </View>

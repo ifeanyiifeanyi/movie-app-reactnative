@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Trinity Movies",
-    "slug": "Trinity-Movies",
+    "name": "Sabi catechism",
+    "slug": "Sabi-catechism",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/adaptive-icon.png",
+    "icon": "./assets/1adaptive-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/adaptive-icon.png",
+      "image": "./assets/1adaptive-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
@@ -23,7 +23,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/1adaptive-icon.png",
         "backgroundColor": "#000000"
       },
       "permissions": [
@@ -31,10 +31,16 @@
         "RECORD_AUDIO",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
-      ]
+      ],
+      "package": "com.ifeanyi22.Sabicatechism"
     },
     "web": {
-      "favicon": "./assets/adaptive-icon.png"
+      "favicon": "./assets/1adaptive-icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0103c8bb-f0ad-4a53-ab3c-8d4ab1035863"
+      }
     }
   }
 }

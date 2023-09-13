@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from "react-native";
 import axios from "axios";
-import { BASE_URL } from '@env';
+import { EXPO_PUBLIC_BASE_URL } from '@env';
 import * as Device from 'expo-device'
 
 
@@ -34,7 +34,7 @@ export default function Register() {
       Alert.alert("Warning", "Passwords do not match!")
       return;
     } else {
-      axios.post(`${BASE_URL}/api/register`, {
+      axios.post(`${EXPO_PUBLIC_BASE_URL}/api/register`, {
         name: name,
         username: username,
         email: email,

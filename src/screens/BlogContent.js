@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image, ScrollView, SafeAreaView, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
-import { BASE_URL } from '@env';
+import { EXPO_PUBLIC_BASE_URL } from '@env';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -128,7 +128,7 @@ const BlogContent = ({ navigation, route }) => {
     //submit user comments
     function submitComment() {
         SetIsLoading(true);
-        axios.post(`${BASE_URL}/api/blog/comment`, {
+        axios.post(`${EXPO_PUBLIC_BASE_URL}/api/blog/comment`, {
             userId: parseInt(uId),
             postId: parseInt(content.id),
             comment: comment
@@ -151,7 +151,7 @@ const BlogContent = ({ navigation, route }) => {
     // get users comments
     function getUserComments() {
         // SetIsLoading(true);
-        axios.post(`${BASE_URL}/api/comments`, {
+        axios.post(`${EXPO_PUBLIC_BASE_URL}/api/comments`, {
             postId: content.id,
         }).then(response => {
             // console.log(response.data)
@@ -183,7 +183,7 @@ const BlogContent = ({ navigation, route }) => {
     return (
         <View style={styles.container}>
             <View style={styles.topView}>
-                <Image style={styles.bannerImage} source={{ uri: `${BASE_URL}/${content.thumbnail}` }} />
+                <Image style={styles.bannerImage} source={{ uri: `${EXPO_PUBLIC_BASE_URL}/${content.thumbnail}` }} />
             </View>
             <ScrollView>
                 <View style={styles.bottomView}>

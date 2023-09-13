@@ -13,7 +13,7 @@ import {
   Alert,
 } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BASE_URL } from '@env';
+import { EXPO_PUBLIC_BASE_URL } from '@env';
 import axios from "axios";
 
 
@@ -104,7 +104,7 @@ const ChangePassword = ({ navigation, route }) => {
       } else {
 
         if (uId) {
-          const response = await axios.post(`${BASE_URL}/api/update-password`, {
+          const response = await axios.post(`${EXPO_PUBLIC_BASE_URL}/api/update-password`, {
             userId: uId,
             currentPassword: currentPassword,
             newPassword: newPassword,

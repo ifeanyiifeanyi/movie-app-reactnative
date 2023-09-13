@@ -2,7 +2,7 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Dim
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { Video, AVPlaybackStatus, PosterComponent, usePoster } from 'expo-av';
-import { BASE_URL } from '@env';
+import { EXPO_PUBLIC_BASE_URL } from '@env';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -109,7 +109,7 @@ export default function VideoDetail({ route }) {
 
     // display thumbnail , before video is loaded | played
     function MyPosterComponent() {
-        const { poster, onLoad, onError } = usePoster(`${BASE_URL}/${videoData.thumbnail}`, options);
+        const { poster, onLoad, onError } = usePoster(`${EXPO_PUBLIC_BASE_URL}/${videoData.thumbnail}`, options);
         return (
             <PosterComponent
                 poster={poster}
@@ -138,7 +138,7 @@ export default function VideoDetail({ route }) {
             // if (isConnected) {
             axios({
                 // use video id to fetch video
-                url: `${BASE_URL}/api/video/${videoId}`,
+                url: `${EXPO_PUBLIC_BASE_URL}/api/video/${videoId}`,
                 method: "GET",
                 header: {
                     'Authorization': 'Bearer ' + token
@@ -185,7 +185,7 @@ export default function VideoDetail({ route }) {
 
     function likeVideo() {
         try {
-            axios.post(`${BASE_URL}/api/videolikes/likes`,
+            axios.post(`${EXPO_PUBLIC_BASE_URL}/api/videolikes/likes`,
                 {
                     videoId: videoId,
                     userId: uId
@@ -210,7 +210,7 @@ export default function VideoDetail({ route }) {
     }
     function disLikeVideo() {
         try {
-            axios.post(`${BASE_URL}/api/videodislikes/dislikes`,
+            axios.post(`${EXPO_PUBLIC_BASE_URL}/api/videodislikes/dislikes`,
                 {
                     videoId: videoId,
                     userId: uId
@@ -245,9 +245,9 @@ export default function VideoDetail({ route }) {
                                 <Video
                                     style={styles.videoImage}
                                     ref={video}
-                                    source={{ uri: `${BASE_URL}/${videoData.video}` }}
+                                    source={{ uri: `${EXPO_PUBLIC_BASE_URL}/${videoData.video}` }}
                                     usePoster
-                                    posterSource={{ uri: `${BASE_URL}/${videoData.thumbnail}` }}
+                                    posterSource={{ uri: `${EXPO_PUBLIC_BASE_URL}/${videoData.thumbnail}` }}
                                     posterComponent={MyPosterComponent}
                                     resizeMode="contain"
                                     useNativeControls

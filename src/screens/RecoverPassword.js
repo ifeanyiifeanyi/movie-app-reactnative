@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
     SafeAreaView,
 } from "react-native";
-import { BASE_URL } from '@env';
+import { EXPO_PUBLIC_BASE_URL } from '@env';
 import axios from "axios";
 
 export default function RecoverPassword() {
@@ -23,7 +23,7 @@ export default function RecoverPassword() {
     const [emailSuccess, setEmailSuccess] = useState('');
 
     const handleResetPassword = () => {
-        axios.post(`${BASE_URL}/api/forgot-password`,{
+        axios.post(`${EXPO_PUBLIC_BASE_URL}/api/forgot-password`,{
 
             email:email
 

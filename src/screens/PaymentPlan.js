@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaVi
 import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BASE_URL } from '@env';
+import { EXPO_PUBLIC_BASE_URL } from '@env';
 import axios from "axios";
 
 import { LinearGradient } from 'expo-linear-gradient';
@@ -85,7 +85,7 @@ const PaymentPlan = ({ navigation }) => {
   useEffect(() => {
     async function fetchPaymentPlan() {
       axios({
-        url: `${BASE_URL}/api/paymentPlans`,
+        url: `${EXPO_PUBLIC_BASE_URL}/api/paymentPlans`,
         method: "GET",
         header:{
           'Authorization': 'Bearer ' + token

@@ -3,7 +3,7 @@ import { ImageBackground, View, Text, StyleSheet, TextInput, Button, TouchableOp
 import { useEffect, useState, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BASE_URL, PAYSTACK_PUBLIC_KEY } from '@env';
+import { EXPO_PUBLIC_BASE_URL, EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY } from '@env';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from "axios";
 import { Paystack, paystackProps } from 'react-native-paystack-webview';
@@ -102,7 +102,7 @@ export default function ConfirmPayment({ props, route }) {
     <View style={{ flex: 1 }}>
       <View style={styles.container}>
         <Paystack
-          paystackKey={PAYSTACK_PUBLIC_KEY}
+          paystackKey={EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY}
           billingEmail={email}
           amount={JSON.stringify(amount)}
           onCancel={(e) => {
@@ -125,7 +125,7 @@ export default function ConfirmPayment({ props, route }) {
           onSuccess={(res) => {
             console.log(res.data.transactionRef.reference)
             // handle response here
-            axios.post(`${BASE_URL}/api/payment`, {
+            axios.post(`${EXPO_PUBLIC_BASE_URL}/api/payment`, {
               userId: uId,
               paymentPlanId: paymentPlanId,
               duration: duration_in_number,
