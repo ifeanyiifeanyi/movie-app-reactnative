@@ -49,9 +49,10 @@ export default function Login({ route }) {
             }).then(async response => {
                 // if login data return true 
                 if (response.data.status) {
-                    // console.log(response.data)
+                    console.log(response.data)
                     const user_plan = response.data.user_plan;
-                    console.log("user plan data", user_plan)
+                    const user_plan_expire = response.data.expiry_date;
+                    console.log("user plan data", user_plan_expire)
 
                     if (user_plan) {
                         AsyncStorage.setItem('user_plan', JSON.stringify(user_plan))
@@ -60,6 +61,16 @@ export default function Login({ route }) {
                             })
                             .catch((error) => {
                                 console.log('Failed to store user_plan:', error);
+                            });
+                    }
+
+                    if(user_plan_expire){
+                        AsyncStorage.setItem('user_plan_expire', JSON.stringify(user_plan_expire))
+                            .then(() => {
+                                console.log('user_plan_expire stored successfully');
+                            })
+                            .catch((error) => {
+                                console.log('Failed to store user_plan_expire:', error);
                             });
                     }
 

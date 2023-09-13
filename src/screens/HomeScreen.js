@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   bottomNavigationCardImage: {
     width: 30,
     height: 30,
-    boxSizing: 'content-box',
+    // boxSizing: 'content-box',
     tintColor: 'teal'
   },
   bottomNavigationCardImageActive: {

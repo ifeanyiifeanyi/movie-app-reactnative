@@ -6,13 +6,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
 import axios from "axios";
 import { LinearGradient } from 'expo-linear-gradient';
+import moment from 'moment';
 
-
-// //
 
 const SelectUser = ({ navigation, route }) => {
-
-
 
   // for async storage
   const [name, setName] = useState('');
@@ -26,18 +23,43 @@ const SelectUser = ({ navigation, route }) => {
   // navigation and async storage id
   const { user_id } = route.params ? route.params : uId;
 
-  // user if active plan if there is?
-  const [userPlan, setUserPlan] = useState();
 
+  const [activeUserPlan, setActiveUserPlan] = useState();
+  const [activeUserPlanExpire, setActiveUserPlanExpire] = useState();
 
   useEffect(() => {
-    userActivePlan();
     getData();
   }, [])
 
   // set user asyn storage values
   const getData = () => {
     try {
+      AsyncStorage.getItem('user_plan')
+        .then((user_planString) => {
+          if (user_planString) {
+            const user_plan = JSON.parse(user_planString);
+            setActiveUserPlan(user_plan);
+            console.log('Retrieved user_plan:', user_plan);
+          } else {
+            console.log('No user_plan found in AsyncStorage');
+          }
+        })
+        .catch((error) => {
+          console.log('Failed to retrieve user_plan:', error);
+        });
+      AsyncStorage.getItem('user_plan_expire')
+        .then((user_plan_expireString) => {
+          if (user_plan_expireString) {
+            const user_plan_expire = JSON.parse(user_plan_expireString);
+            setActiveUserPlanExpire(user_plan_expire);
+            console.log('Retrieved user_plan_expire:', user_plan_expire);
+          } else {
+            console.log('No user_plan_expire found in AsyncStorage');
+          }
+        })
+        .catch((error) => {
+          console.log('Failed to retrieve user_plan:', error);
+        });
       AsyncStorage.getItem('name')
         .then(value => {
           if (value != null) {
@@ -113,33 +135,15 @@ const SelectUser = ({ navigation, route }) => {
     }
   }
 
-  // user active subscription by user id, 
-  // id set by navigation params, and asynstorage params
-  // in case of param delay for function call
-  function userActivePlan() {
-    axios({
-      url: `${BASE_URL}/api/userActivePlan/${user_id ? user_id : uId}`,
-      method: "GET",
 
-    }).then(res => {
-      setUserPlan(res.data[0]);
-      console.log(res.data)
-    }).catch((err) => {
-      console.log(err)
-      // Alert.alert('Something went wrong.', "Please try again later", [
-      //   {
-      //     text: "Try Again",
-      //     onPress: () => userActivePlan,
-      //     style: "cancel"
-      //   }
-      // ]);
-    })
-  }
-
+  const formatCreatedAt = (dateString) => {
+    // Use moment.js to format the date
+    return moment(dateString).format('LLL');
+  };
   return (
     <SafeAreaView>
       <ScrollView>
-        <View style={{ padding: 10, backgroundColor: '#000', width: '100%', height: 200 }}>
+        <View style={{ padding: 10, backgroundColor: '#000', width: '100%', height: 155 }}>
           <TouchableOpacity>
             <Image source={require('../img/logo/loginlogo.png')} style={{ width: 70, height: 90, marginTop: 60 }} />
           </TouchableOpacity>
@@ -156,7 +160,7 @@ const SelectUser = ({ navigation, route }) => {
           <View style={styles.viewVideos}>
             <View>
               {
-                parseInt(subscriptionId) > 0 ?
+                activeUserPlan && activeUserPlan.length > 0 ?
 
                   (
                     <TouchableOpacity
@@ -197,24 +201,30 @@ const SelectUser = ({ navigation, route }) => {
 
           <View>
             {
-              parseInt(subscriptionId) > 0 ?
+              activeUserPlan && activeUserPlan.length > 0 ?
                 (
                   <TouchableOpacity onPress={() => { }}>
                     <View style={styles.userDetailSubscribeDone}>
-                      <Image source={require('../img/logo/subscription.png')} style={{ width: 30, height: 30, marginLeft: 10 }} />
+                      <Image source={require('../img/logo/subscription.png')} style={{ width: 30, height: 30, marginLeft: 5 }} />
 
                       {
-                        userPlan && userPlan ?
+                        activeUserPlan && activeUserPlan.length > 0  ?
                           (
-                            <TouchableOpacity style={{ marginLeft: 20 }}>
+                            <TouchableOpacity style={{ marginLeft: 10 }}>
                               <Text style={{ marginBottom: 10, color: 'royalblue', fontWeight: 'bold' }}>
-                                {userPlan.name.toUpperCase()} {"(" + userPlan.duration_in_name + ")"}
+                                {activeUserPlan[0].name.toUpperCase()} {"(" + activeUserPlan[0].duration_in_name + ")"}
                               </Text>
                               <Text style={{ marginBottom: 10, color: '#ddd', fontWeight: 'bold' }}>
-                                ₦ {userPlan.amount}
+                                ₦ {activeUserPlan[0].amount}
                               </Text>
                               <Text style={{ marginBottom: 10, color: '#ddd', fontWeight: 'bold' }}>
-                                {userPlan.transaction_reference}
+                                {activeUserPlan[0].transaction_reference}
+                              </Text>
+                              <Text style={{ marginBottom: 10, color: '#ddd', fontWeight: 'bold' }}>
+                                Start Date:  {formatCreatedAt(activeUserPlan[0].created_at)}
+                              </Text>
+                              <Text style={{ marginBottom: 10, color: '#ddd', fontWeight: 'bold' }}>
+                                End Date:  {formatCreatedAt(activeUserPlanExpire)}
                               </Text>
                             </TouchableOpacity>
                           ) :
