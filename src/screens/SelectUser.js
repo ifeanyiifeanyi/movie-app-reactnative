@@ -21,9 +21,9 @@ const SelectUser = ({ navigation, route }) => {
   const [subscriptionId, setSubscriptionId] = useState('');
 
   // navigation and async storage id
-  const { user_id } = route.params ? route.params : uId;
+  const { user_id } = route?.params ? route?.params : uId;
 
-
+console.log('user id',uId)
   const [activeUserPlan, setActiveUserPlan] = useState();
   const [activeUserPlanExpire, setActiveUserPlanExpire] = useState();
 
