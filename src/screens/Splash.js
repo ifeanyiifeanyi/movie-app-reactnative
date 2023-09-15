@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Alert, LogBox } from 'react-native'
+import { View, Text, StyleSheet, Image, Alert, LogBox, DevSettings } from 'react-native'
 import { useEffect, useState } from 'react'
 import { black } from '../utils/Colors'
 import { useNavigation } from '@react-navigation/native'
@@ -16,12 +16,12 @@ const Splash = () => {
 
   useEffect(() => {
     NetInfo.addEventListener(state => {
-      console.log('Connection type: ', state.type);
-      console.log('Is connected? ', state.isConnected);
-      console.log('Is internet reachable? ', state.isInternetReachable);
+      console.log('Connection type: ', state?.type);
+      console.log('Is connected? ', state?.isConnected);
+      console.log('Is internet reachable? ', state?.isInternetReachable);
     });
     NetInfo.fetch().then(state => {
-      setIsConnected(state.isConnected);
+      setIsConnected(state?.isConnected);
     });
     return () => {
       console.log("calling network error");
