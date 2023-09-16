@@ -24,14 +24,8 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/1adaptive-icon.png",
-        "backgroundColor": "#000000"
+        "backgroundColor": "#FFFFFF"
       },
-      "permissions": [
-        "CAMERA",
-        "RECORD_AUDIO",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ],
       "package": "com.ifeanyi22.Sabicatechism"
     },
     "web": {
